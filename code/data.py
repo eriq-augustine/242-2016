@@ -1,8 +1,6 @@
 import pickle
-import psycopg2
 
-# secrets.py should define DB_HOST, DB_PORT, DB_USER, and DB_PASS
-import secrets
+# If you use the db, then you will need a file (secrets.py) that defines: DB_HOST, DB_PORT, DB_USER, and DB_PASS
 
 FAKE_BUSINESSES_FILE = 'fakeBusinesses.pickle'
 
@@ -50,9 +48,11 @@ QUERY_BUSINESSES = '''
 def getConnectionString():
     return "host='%s' port='%s' dbname='%s' user='%s' password='%s'" % (secrets.DB_HOST, secrets.DB_PORT, secrets.DB_NAME, secrets.DB_USER, secrets.DB_PASS)
 
-def getBusinesses(fake = False):
-    if (fake):
-        return getFakeBusinesses();
+def getBusinessesDB():
+    # We will only need the imports if you actually hit the db.
+    # secrets.py should define DB_HOST, DB_PORT, DB_USER, and DB_PASS
+    import secrets
+    import psycopg2
 
     conn = psycopg2.connect(getConnectionString())
     cur = conn.cursor()
@@ -64,6 +64,11 @@ def getBusinesses(fake = False):
     conn.close()
 
     return businesses
+
+def getBusinesses(fake = False):
+    if (fake):
+        return getFakeBusinesses()
+    return getBusinessesDB()
 
 # Just a quick way to get some data to work with without hitting the DB.
 def getFakeBusinesses():

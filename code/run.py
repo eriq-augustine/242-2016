@@ -12,8 +12,8 @@ def run():
     kMeans = clustering.KMeans(K, distance.euclidean)
     clusters = kMeans.cluster(businesses)
 
-    for cluster in clusters:
-        print(len(cluster))
+    for i in range(len(clusters)):
+        print("Cluster: %02d, Size: %02d" % (i, len(clusters[i])))
 
 if __name__ == '__main__':
     run()
