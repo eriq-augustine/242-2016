@@ -23,7 +23,7 @@ class KMeans:
             newClusters = [[] for x in centroids]
             for point in points:
                 # Assign to the closest centroid
-                newClusters[self.closestCentroidIndex(centroids, point)].append(point)
+                newClusters[self.closestPointIndex(centroids, point)].append(point)
 
             # Recompute centroids
             newCentroids = self.recomputeCentroids(newClusters)
@@ -36,11 +36,12 @@ class KMeans:
 
         return clusters
 
-    def closestCentroidIndex(self, centroids, point):
+    # Find the point in |points| closest to |queryPoint|.
+    def closestPointIndex(self, points, queryPoint):
         closestIndex = -1
         minDistance = -1
-        for i in range(len(centroids)):
-            distance = self.pairwiseDistance(centroids[i], point)
+        for i in range(len(points)):
+            distance = self.pairwiseDistance(points[i], queryPoint)
             if (closestIndex == -1 or distance < minDistance):
                 closestIndex = i
                 minDistance = distance
@@ -53,28 +54,64 @@ class KMeans:
     def recomputeCentroids(self, clusters):
         centroids = []
         for cluster in clusters:
-            centroidIndex = -1
-            minDistance = -1
-            for i in range(len(cluster)):
-                totalDistance = 0
-                for j in range(len(cluster)):
-                    if (i != j):
-                        totalDistance += self.pairwiseDistance(cluster[i], cluster[j])
-
-                if (centroidIndex == -1 or totalDistance < minDistance):
-                    centroidIndex = i
-                    minDistance = totalDistance
-
-            centroids.append(cluster[i])
+            index = self.getPairwiseCentroidIndex(cluster)
+            centroids.append(cluster[index])
 
         return centroids
 
-    # TODO(eriq): Select centroids by:
+    # Given all the points, find the point that has the minimum distance to all the other points.
+    def getPairwiseCentroidIndex(self, points):
+        index = -1
+        minDistance = -1
+        for i in range(len(points)):
+            totalDistance = 0
+            for j in range(len(points)):
+                if (i != j):
+                    totalDistance += self.pairwiseDistance(points[i], points[j])
+
+            if (index == -1 or totalDistance < minDistance):
+                index = i
+                minDistance = totalDistance
+
+        return index
+
+    # Get the summed distance between one point and a group of points.
+    def getTotalDistance(self, queryPoint, points):
+        totalDistance = 0
+        for point in points:
+            totalDistance += self.pairwiseDistance(queryPoint, point)
+        return totalDistance
+
+    # Select centroids by:
     #   - Select dataset centroid, DC
     #   - Pick max distance from DC as first centroid.
     #   - Pick all subsequent centroids by maxing distance from all current centroids.
     def selectInitialCentroids(self, points):
-        return random.sample(points, self.k)
+        # Start with the datasent centroid
+        centroidIndexes = [self.getPairwiseCentroidIndex(points)]
+        centroids = [points[centroidIndexes[0]]]
+
+        # For all the other centroids, pick the point that maximizes the distance from all current centroids.
+        for i in range(1, self.k):
+            # Bail out if no more points are left
+            if (len(centroids) >= len(points)):
+                break
+
+            index = -1
+            maxDistance = -1
+            for j in range(len(points)):
+                if (j in centroidIndexes):
+                    continue
+
+                distance = self.getTotalDistance(points[j], centroids)
+                if (index == -1 or distance > maxDistance):
+                    index = j
+                    maxDistance = distance
+
+            centroidIndexes.append(index)
+            centroids.append(points[index])
+
+        return centroids
 
 if __name__ == '__main__':
     data = [
@@ -92,4 +129,8 @@ if __name__ == '__main__':
     ]
 
     kMeans = KMeans(3, distance.euclidean)
-    print(kMeans.cluster(data))
+    clusters = kMeans.cluster(data)
+
+    print(clusters)
+    for i in range(len(clusters)):
+        print("Cluster: %02d, Size: %02d" % (i, len(clusters[i])))
