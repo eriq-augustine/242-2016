@@ -7,6 +7,7 @@ FAKE_BUSINESSES_FILE = 'fakeBusinesses.pickle'
 QUERY_BUSINESSES = '''
     SELECT
     B.id,
+    B.active,
     B.city,
     B.state,
     B.stars,
@@ -37,15 +38,16 @@ QUERY_BUSINESSES = '''
 		CHAR_LENGTH(REGEXP_SPLIT_TO_TABLE(text, E'\\s+')) AS wordLen
 	    FROM Reviews
 	    -- If you want a just a test set quickly, the uncomment the next line.
-	    -- WHERE businessId <= 20
+	    WHERE businessId <= 20
 	) X
 	GROUP BY businessId
     ) W ON W.businessId = B.id
     -- If you want a just a test set quickly, the uncomment the next line.
-    -- LIMIT 20
+    LIMIT 20
 '''
 
 def getConnectionString():
+    import secrets
     return "host='%s' port='%s' dbname='%s' user='%s' password='%s'" % (secrets.DB_HOST, secrets.DB_PORT, secrets.DB_NAME, secrets.DB_USER, secrets.DB_PASS)
 
 def getBusinessesDB():
