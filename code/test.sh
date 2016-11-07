@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # Run all the unit tests.
-python -m unittest *_test.py
+python3 -m unittest *_test.py
