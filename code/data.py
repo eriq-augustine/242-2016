@@ -81,4 +81,4 @@ if __name__ == '__main__':
     print(len(businesses))
     for business in businesses[:10]:
         print(business)
-    pickle.dump(businesses[:50], open(FAKE_BUSINESSES_FILE, 'wb'))
+    # pickle.dump(businesses[:50], open(FAKE_BUSINESSES_FILE, 'wb'))
