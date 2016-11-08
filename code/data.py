@@ -7,6 +7,7 @@ FAKE_BUSINESSES_FILE = 'fakeBusinesses.pickle'
 QUERY_BUSINESSES = '''
     SELECT
         B.id,
+        B.yelpId,
         B.active,
         B.city,
         B.state,

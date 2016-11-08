@@ -4,6 +4,14 @@ import data
 # This is mainly for deciding if we are getting real or fake data.
 DEBUG = True
 
+# Query constants
+COLUMN_ID = 0
+COLUMN_YELP_ID = 1
+COLUMN_ACTIVE = 2
+COLUMN_CITY = 3
+COLUMN_STATE = 4
+COLUMN_NUMERIC_START = 5
+
 # Takes a list of maps and converts it to a single one-hot encoding.
 # [{"key1": val1, "key2", val2}, ...]
 # All the dictionaries must have the same keys.
@@ -44,10 +52,15 @@ def getBusinesses():
     rawBusinesses = data.getBusinesses(DEBUG)
 
     # one-hot encoding of active, city, and state variables + numeric features
-    cityStateMatrix = oneHot([{"active": b[1], "city": b[2], "state": b[3]} for b in rawBusinesses])
-    features = [list(rawBusinesses[i][4:]) + cityStateMatrix[i] for i in range(len(rawBusinesses))]
+    cityStateMatrix = oneHot([{"active": b[COLUMN_ACTIVE], "city": b[COLUMN_CITY], "state": b[COLUMN_STATE]} for b in rawBusinesses])
+    features = [list(rawBusinesses[i][COLUMN_NUMERIC_START:]) + cityStateMatrix[i] for i in range(len(rawBusinesses))]
 
-    return [business.Business(rawBusinesses[i][0], features[i]) for i in range(len(rawBusinesses))]
+    return [business.Business(rawBusinesses[i][COLUMN_ID], features[i], {"yelpId": rawBusinesses[i][COLUMN_YELP_ID]}) for i in range(len(rawBusinesses))]
 
 if __name__ == '__main__':
-    print(getBusinesses())
+    businesses = getBusinesses()
+    print(businesses)
+    print("0:")
+    print("   " + str(businesses[0].id))
+    print("   " + str(businesses[0].features))
+    print("   " + str(businesses[0].otherInfo))
