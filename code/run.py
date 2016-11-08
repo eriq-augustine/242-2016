@@ -6,7 +6,7 @@ import features
 K = 10
 
 def run():
-    businesses = features.getFeatures()
+    businesses = features.getBusinesses()
 
     # Arbitrary K
     kMeans = clustering.KMeans(K, distance.euclidean)

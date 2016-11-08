@@ -1,3 +1,4 @@
+import business
 import distance
 
 import random
@@ -12,10 +13,13 @@ K_MEANS_DEFAULT_MAX_STEPS = 10
 class KMeans:
     def __init__(self, k, pairwiseDistance, maxSteps = K_MEANS_DEFAULT_MAX_STEPS):
         self.k = k
-        self.pairwiseDistance = pairwiseDistance
+        # Don't refer to this directly, instead use calculatePairwiseDistance().
+        self._pairwiseDistance = pairwiseDistance
         self.maxSteps = maxSteps
         self.centroids = []
 
+    # |points| must have a property called "features" which is the
+    # features to compare on.
     def cluster(self, points):
         centroids = self.selectInitialCentroids(points)
 
@@ -36,12 +40,15 @@ class KMeans:
 
         return clusters
 
+    def calculatePairwiseDistance(self, a, b):
+        return self._pairwiseDistance(a.features, b.features)
+
     # Find the point in |points| closest to |queryPoint|.
     def closestPointIndex(self, points, queryPoint):
         closestIndex = -1
         minDistance = -1
         for i in range(len(points)):
-            distance = self.pairwiseDistance(points[i], queryPoint)
+            distance = self.calculatePairwiseDistance(points[i], queryPoint)
             if (closestIndex == -1 or distance < minDistance):
                 closestIndex = i
                 minDistance = distance
@@ -67,7 +74,7 @@ class KMeans:
             totalDistance = 0
             for j in range(len(points)):
                 if (i != j):
-                    totalDistance += self.pairwiseDistance(points[i], points[j])
+                    totalDistance += self.calculatePairwiseDistance(points[i], points[j])
 
             if (index == -1 or totalDistance < minDistance):
                 index = i
@@ -79,7 +86,7 @@ class KMeans:
     def getTotalDistance(self, queryPoint, points):
         totalDistance = 0
         for point in points:
-            totalDistance += self.pairwiseDistance(queryPoint, point)
+            totalDistance += self.calculatePairwiseDistance(queryPoint, point)
         return totalDistance
 
     # Select centroids by:
@@ -115,22 +122,21 @@ class KMeans:
 
 if __name__ == '__main__':
     data = [
-        [0, 0, 0],
-        [1, 1, 1],
-        [2, 2, 2],
+        business.Business(1, [0, 0, 0]),
+        business.Business(2, [1, 1, 1]),
+        business.Business(3, [2, 2, 2]),
 
-        [10, 10, 10],
-        [11, 11, 11],
-        [12, 12, 12],
+        business.Business(4, [10, 10, 10]),
+        business.Business(5, [11, 11, 11]),
+        business.Business(6, [12, 12, 12]),
 
-        [110, 110, 110],
-        [111, 111, 111],
-        [112, 112, 112]
+        business.Business(7, [110, 110, 110]),
+        business.Business(8, [111, 111, 111]),
+        business.Business(9, [112, 112, 112])
     ]
 
     kMeans = KMeans(3, distance.euclidean)
     clusters = kMeans.cluster(data)
 
-    print(clusters)
     for i in range(len(clusters)):
-        print("Cluster: %02d, Size: %02d" % (i, len(clusters[i])))
+        print("Cluster: %02d, Size: %02d - %s" % (i, len(clusters[i]), [str(x.id) for x in clusters[i]]))
