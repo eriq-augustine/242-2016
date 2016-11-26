@@ -88,8 +88,18 @@ def needleman_wunsch(a,b):
             state[i][j] = max(diagonal, state[i - 1][j] - 1, state[i][j - 1] - 1)
     return state[len(a)][len(b)]
 
+'''
+The Jaccard index (similarity) for set features.
 
+'''
 
+# Pre: a and b are list 
+def jaccard(a,b):
+    a = set(a)
+    b = set(b)
+    intersection = len(a.intersection(b))
+    union = len(a.union(b))
+    return 1.0 * intersection / (union)
     
 
 
