@@ -90,16 +90,32 @@ def needleman_wunsch(a,b):
 
 '''
 The Jaccard index (similarity) for set features.
-
 '''
-
 # Pre: a and b are list 
 def jaccard(a,b):
+
+    #Cornner case
+    if len(a) == 0 and len(b) == 0:
+        return 1
+
     a = set(a)
     b = set(b)
     intersection = len(a.intersection(b))
     union = len(a.union(b))
     return 1.0 * intersection / (union)
     
+'''
+Dice coefficient for set features.
+'''
+# Pre: a and b are list
+def dice(a,b):
 
+    #Conner case
+    if len(a) == 0 and len(b) == 0:
+        return 1
+
+    a = set(a)
+    b = set(b)
+    intersection = len(a.intersection(b))
+    return 2.0 * intersection / (len(a) + len(b))
 
