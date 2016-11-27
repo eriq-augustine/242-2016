@@ -1,5 +1,6 @@
 import math
 import numpy
+import unittest
 # A place for distance metric related things.
 # Do not feel limited to use only this file, but whoever wants to use distance things
 # should just have to import this one file.
@@ -118,4 +119,18 @@ def dice(a,b):
     b = set(b)
     intersection = len(a.intersection(b))
     return 2.0 * intersection / (len(a) + len(b))
+
+'''
+Unit test
+'''
+
+class DistanceTest(unittest.TestCase):
+    def test_euclidean(self):
+        self.assertEqual(euclidean([3,4],[0,0]), 5)
+    
+
+
+
+if __name__ == '__main__':
+    unittest.main()
 
