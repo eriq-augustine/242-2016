@@ -3,6 +3,7 @@ import pickle
 # If you use the db, then you will need a file (secrets.py) that defines: DB_HOST, DB_PORT, DB_USER, and DB_PASS
 
 FAKE_BUSINESSES_FILE = 'fakeBusinesses.pickle'
+REAL_BUSINESSES_FILE = 'fullBusinesses.pickle'
 
 QUERY_BUSINESSES = '''
     SELECT
@@ -71,11 +72,15 @@ def getBusinessesDB():
 def getBusinesses(fake = False):
     if (fake):
         return getFakeBusinesses()
-    return getBusinessesDB()
+    return getFullBusinesses()
 
 # Just a quick way to get some data to work with without hitting the DB.
 def getFakeBusinesses():
     return pickle.load(open(FAKE_BUSINESSES_FILE, 'rb'))
+
+# Get the real businesses from the pickle.
+def getFullBusinesses():
+    return pickle.load(open(FULL_BUSINESSES_FILE, 'rb'))
 
 if __name__ == '__main__':
     businesses = getBusinesses()
@@ -83,3 +88,4 @@ if __name__ == '__main__':
     for business in businesses[:10]:
         print(business)
     # pickle.dump(businesses[:50], open(FAKE_BUSINESSES_FILE, 'wb'))
+    # pickle.dump(businesses, open(FULL_BUSINESSES_FILE, 'wb'))
