@@ -127,9 +127,21 @@ Unit test
 class DistanceTest(unittest.TestCase):
     def test_euclidean(self):
         self.assertEqual(euclidean([3,4],[0,0]), 5)
+
+    def test_manhattan(self):
+        self.assertEqual(manhattan([3,4],[0,0]), 7)
+
+    def test_levenshtein(self):
+        self.assertEqual(levenshtein("a","ab"), 1)
     
-
-
+    def test_needleman_wunsch(self):
+        self.assertEqual(needleman_wunsch("a","ab"), 0)
+    
+    def test_jaccard(self):
+        self.assertEqual(jaccard(['spicy','sweet'],['spicy']), 0.5)
+    
+    def test_dice(self):
+        self.assertEqual(dice(['spicy','sweet'],['spicy','salt']), 0.5)
 
 if __name__ == '__main__':
     unittest.main()
