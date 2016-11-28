@@ -21,6 +21,15 @@ QUERY_BUSINESSES = '''
         COALESCE(W.numWords / R.availableReviewCount, 0) AS meanWordCount
     FROM
         Businesses B
+        JOIN (
+            SELECT DISTINCT businessId
+            FROM BusinessCategories BC
+            WHERE name IN (
+                'Restaurants', 'Food', 'Fast Food', 'Pizza', 'Mexican',
+                'Sandwiches', 'American (Traditional)', 'Burgers', 'Italian',
+                'Chinese', 'American (New)', 'Breakfast & Brunch', 'Cafes'
+            )
+        ) Restaurants ON Restaurants.businessId = B.id
         LEFT JOIN (
             SELECT
                 businessId,
@@ -83,9 +92,9 @@ def getFullBusinesses():
     return pickle.load(open(REAL_BUSINESSES_FILE, 'rb'))
 
 if __name__ == '__main__':
-    businesses = getBusinesses()
+    businesses = getBusinessesDB()
     print(len(businesses))
     for business in businesses[:10]:
         print(business)
     # pickle.dump(businesses[:50], open(FAKE_BUSINESSES_FILE, 'wb'))
-    # pickle.dump(businesses, open(FULL_BUSINESSES_FILE, 'wb'))
+    # pickle.dump(businesses, open(REAL_BUSINESSES_FILE, 'wb'))
