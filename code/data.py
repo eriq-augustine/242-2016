@@ -80,7 +80,7 @@ def getFakeBusinesses():
 
 # Get the real businesses from the pickle.
 def getFullBusinesses():
-    return pickle.load(open(FULL_BUSINESSES_FILE, 'rb'))
+    return pickle.load(open(REAL_BUSINESSES_FILE, 'rb'))
 
 if __name__ == '__main__':
     businesses = getBusinesses()
