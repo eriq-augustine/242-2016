@@ -46,5 +46,23 @@ class TestDistance(unittest.TestCase):
         b = 'xyz'
         self.assertEqual(distance.levenshtein(a, b), 3)
 
+    def test_euclidean(self):
+        self.assertEqual(distance.euclidean([3,4],[0,0]), 5)
+
+    def test_manhattan(self):
+        self.assertEqual(distance.manhattan([3,4],[0,0]), 7)
+
+    def test_levenshtein(self):
+        self.assertEqual(distance.levenshtein("a","ab"), 1)
+
+    def test_needleman_wunsch(self):
+        self.assertEqual(distance.needleman_wunsch("a","ab"), 0)
+
+    def test_jaccard(self):
+        self.assertEqual(distance.jaccard(['spicy','sweet'],['spicy']), 0.5)
+
+    def test_dice(self):
+        self.assertEqual(distance.dice(['spicy','sweet'],['spicy','salt']), 0.5)
+
 if __name__ == '__main__':
     unittest.main()

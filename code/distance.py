@@ -1,11 +1,8 @@
 import math
 import numpy
-import unittest
 # A place for distance metric related things.
 # Do not feel limited to use only this file, but whoever wants to use distance things
 # should just have to import this one file.
-
-# TODO(xiao): Research and implement other distance metrics.
 
 '''
 The euclidean distance for numeric features.
@@ -21,7 +18,7 @@ def euclidean(a, b):
     return math.sqrt(distance)
 
 '''
-The manhattan distance for numeric features. 
+The manhattan distance for numeric features.
 '''
 # Pre: a and b are two string variables
 def manhattan(a, b):
@@ -65,7 +62,7 @@ def levenshtein(a, b):
         for j in range(len(v0)):
             v0[j] = v1[j]
     return v1[len(b)]
-    
+
 '''
 The Needleman Wunsch distance for string features.
 Matches are given +1, mismatches are given -1 and indels are given -1
@@ -74,13 +71,13 @@ Matches are given +1, mismatches are given -1 and indels are given -1
 def needleman_wunsch(a,b):
     state = numpy.zeros((len(a) + 1, len(b) + 1))
     # set the initial values for state matrix
-    for i in xrange(1, len(a) + 1):
+    for i in range(1, len(a) + 1):
         state[i][0] = state[i - 1][0] - 1
-    for i in xrange(1, len(b) + 1):
+    for i in range(1, len(b) + 1):
         state[0][i] = state[0][i - 1] - 1
-    
-    for i in xrange(1, len(a) + 1):
-        for j in xrange(1, len(b) + 1):
+
+    for i in range(1, len(a) + 1):
+        for j in range(1, len(b) + 1):
             diagonal = state[i - 1][j - 1]
             if a[i - 1] == b[j - 1]:
                 diagonal += 1
@@ -92,7 +89,7 @@ def needleman_wunsch(a,b):
 '''
 The Jaccard index (similarity) for set features.
 '''
-# Pre: a and b are list 
+# Pre: a and b are list
 def jaccard(a,b):
 
     #Cornner case
@@ -104,7 +101,7 @@ def jaccard(a,b):
     intersection = len(a.intersection(b))
     union = len(a.union(b))
     return 1.0 * intersection / (union)
-    
+
 '''
 Dice coefficient for set features.
 '''
@@ -119,30 +116,3 @@ def dice(a,b):
     b = set(b)
     intersection = len(a.intersection(b))
     return 2.0 * intersection / (len(a) + len(b))
-
-'''
-Unit test
-'''
-
-class DistanceTest(unittest.TestCase):
-    def test_euclidean(self):
-        self.assertEqual(euclidean([3,4],[0,0]), 5)
-
-    def test_manhattan(self):
-        self.assertEqual(manhattan([3,4],[0,0]), 7)
-
-    def test_levenshtein(self):
-        self.assertEqual(levenshtein("a","ab"), 1)
-    
-    def test_needleman_wunsch(self):
-        self.assertEqual(needleman_wunsch("a","ab"), 0)
-    
-    def test_jaccard(self):
-        self.assertEqual(jaccard(['spicy','sweet'],['spicy']), 0.5)
-    
-    def test_dice(self):
-        self.assertEqual(dice(['spicy','sweet'],['spicy','salt']), 0.5)
-
-if __name__ == '__main__':
-    unittest.main()
-
