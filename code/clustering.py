@@ -24,6 +24,14 @@ class KMeans:
         distances = self.calculatePairwiseDistances(points)
         centroids = self.selectInitialCentroids(points, distances)
 
+        clusters = None
+        # These are clusters from the run before the previous run
+        # (2 runs old after the new clusters are computed.)
+        # This will be checked against to ensure we have no jittering
+        # (a point moving between two different clusters which can prevent us from halting early).
+        oldClusters = None
+
+        stop = False
         for i in range(self._maxSteps):
             newClusters = [[] for x in centroids]
             for point in points:
@@ -33,13 +41,31 @@ class KMeans:
             # Recompute centroids
             newCentroids = self.recomputeCentroids(newClusters, distances)
 
-            # TODO(eriq): Do an actual check for halting.
-            #  Probably cluster membership change (watch for jittering).
+            # Check to see if we should end early (but wait for at least two cycles).
+            if (oldClusters != None and self.checkForStop(oldClusters, clusters, newClusters)):
+                stop = True
 
+            oldClusters = clusters
             clusters = newClusters
             centroids = newCentroids
 
+            if (stop):
+                break
+
         return clusters
+
+    def checkForStop(self, oldClusters, clusters, newClusters):
+        if (oldClusters == None or clusters == None):
+            return False
+
+        # Check set membership.
+
+        # Convert the clusters from [[business, ...], ...] to set["id, id, ...", ...]
+        oldClustersSet = set([" ".join([str(x) for x in sorted([business.id for business in cluster])]) for cluster in oldClusters])
+        clustersSet =    set([" ".join([str(x) for x in sorted([business.id for business in cluster])]) for cluster in clusters])
+        newClustersSet = set([" ".join([str(x) for x in sorted([business.id for business in cluster])]) for cluster in newClusters])
+
+        return newClustersSet == clustersSet or newClustersSet == oldClustersSet
 
     def calculatePairwiseDistance(self, a, b):
         return self._pairwiseDistanceFunction(a.features, b.features)
