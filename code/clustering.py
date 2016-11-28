@@ -1,7 +1,7 @@
 import business
 import distance
 
-import collections
+import array
 import random
 
 # All clustering classes have a cluster() method.
@@ -10,19 +10,42 @@ K_MEANS_DEFAULT_MAX_STEPS = 10
 
 # TODO(eriq): agglomerative clustering
 
-# KMeans will only support numeric features.
+# Optimizations:
+#  - Only hold the full points until the distances are calculated.
+#  - Precomputes and caches all pairwise distances.
+#  - Holds all pairwise distances as a single array representing a skew-symmetric matrix.
+#  - Only passes around indexes on the original input.
 class KMeans:
     def __init__(self, k, pairwiseDistance, maxSteps = K_MEANS_DEFAULT_MAX_STEPS):
-        self.k = k
+        self._k = k
         # Don't refer to this directly, instead use calculatePairwiseDistance().
         self._pairwiseDistanceFunction = pairwiseDistance
         self._maxSteps = maxSteps
+        self._clusters = None
+
+        # These will be cleared each run.
+        self._numPoints = 0
+        self._distances = None
 
     # |points| must have a property called "features" which is the
     # features to compare on.
+    # Will return a list of list of indexes into the original list representing the clusters.
     def cluster(self, points):
-        distances = self.calculatePairwiseDistances(points)
-        centroids = self.selectInitialCentroids(points, distances)
+        if (self._clusters != None):
+            return clusters
+
+        self._numPoints = len(points)
+        self._distances = self.calculatePairwiseDistances(points)
+
+        self._clusters = self.kmeans()
+
+        self._numPoints = 0
+        self._distances = None
+
+        return self._clusters
+
+    def kmeans(self):
+        centroids = self.selectInitialCentroids()
 
         clusters = None
         # These are clusters from the run before the previous run
@@ -34,12 +57,12 @@ class KMeans:
         stop = False
         for i in range(self._maxSteps):
             newClusters = [[] for x in centroids]
-            for point in points:
+            for pointIndex in range(self._numPoints):
                 # Assign to the closest centroid
-                newClusters[self.closestPointIndex(centroids, point, distances)].append(point)
+                newClusters[self.closestPointIndex(centroids, pointIndex)].append(pointIndex)
 
             # Recompute centroids
-            newCentroids = self.recomputeCentroids(newClusters, distances)
+            newCentroids = self.recomputeCentroids(newClusters)
 
             # Check to see if we should end early (but wait for at least two cycles).
             if (oldClusters != None and self.checkForStop(oldClusters, clusters, newClusters)):
@@ -60,117 +83,129 @@ class KMeans:
 
         # Check set membership.
 
-        # Convert the clusters from [[business, ...], ...] to set["id, id, ...", ...]
-        oldClustersSet = set([" ".join([str(x) for x in sorted([business.id for business in cluster])]) for cluster in oldClusters])
-        clustersSet =    set([" ".join([str(x) for x in sorted([business.id for business in cluster])]) for cluster in clusters])
-        newClustersSet = set([" ".join([str(x) for x in sorted([business.id for business in cluster])]) for cluster in newClusters])
+        # Convert the clusters from [[int, ...], ...] to set["id, id, ...", ...]
+        oldClustersSet = set([" ".join([str(x) for x in sorted(cluster)]) for cluster in oldClusters])
+        clustersSet =    set([" ".join([str(x) for x in sorted(cluster)]) for cluster in clusters])
+        newClustersSet = set([" ".join([str(x) for x in sorted(cluster)]) for cluster in newClusters])
 
         return newClustersSet == clustersSet or newClustersSet == oldClustersSet
 
-    def calculatePairwiseDistance(self, a, b):
-        return self._pairwiseDistanceFunction(a.features, b.features)
-
-    # Find the point in |points| closest to |queryPoint|.
-    def closestPointIndex(self, points, queryPoint, distances):
+    # Find the index of the pointIndex in |pointIndices| closest to |queryPointIndex|.
+    def closestPointIndex(self, pointIndices, queryPointIndex):
         closestIndex = -1
         minDistance = -1
-        for i in range(len(points)):
-            distance = distances.get(points[i].id, queryPoint.id)
+        for i in range(len(pointIndices)):
+            distance = self._distances.get(pointIndices[i], queryPointIndex)
             if (closestIndex == -1 or distance < minDistance):
                 closestIndex = i
                 minDistance = distance
 
         return closestIndex
 
-    def recomputeCentroids(self, clusters, distances):
+    def recomputeCentroids(self, clusters):
         centroids = []
         for cluster in clusters:
-            index = self.getPairwiseCentroidIndex(cluster, distances)
-            centroids.append(cluster[index])
+            centroids.append(self.getPairwiseCentroid(cluster))
 
         return centroids
 
     # Given all the points, find the point that has the minimum distance to all the other points.
-    def getPairwiseCentroidIndex(self, points, distances):
+    def getPairwiseCentroid(self, pointIndices):
         index = -1
         minDistance = -1
-        for i in range(len(points)):
+        for i in range(len(pointIndices)):
             totalDistance = 0
-            for j in range(len(points)):
+            for j in range(len(pointIndices)):
                 if (i != j):
-                    totalDistance += distances.get(points[i].id, points[j].id)
+                    totalDistance += self._distances.get(pointIndices[i], pointIndices[j])
 
             if (index == -1 or totalDistance < minDistance):
                 index = i
                 minDistance = totalDistance
 
-        return index
+        return pointIndices[index]
 
     # Get the summed distance between one point and a group of points.
-    def getTotalDistance(self, queryPoint, points, distances):
+    def getTotalDistance(self, queryPointIndex, pointIndices):
         totalDistance = 0
-        for point in points:
-            totalDistance += distances.get(queryPoint.id, point.id)
+        for pointIndex in pointIndices:
+            totalDistance += self._distances.get(queryPointIndex, pointIndex)
         return totalDistance
 
     # Select centroids by:
     #   - Select dataset centroid, DC
     #   - Pick max distance from DC as first centroid.
     #   - Pick all subsequent centroids by maxing distance from all current centroids.
-    def selectInitialCentroids(self, points, distances):
+    def selectInitialCentroids(self):
         # Start with the dataset centroid
-        centroidIndexes = [self.getPairwiseCentroidIndex(points, distances)]
-        centroids = [points[centroidIndexes[0]]]
+        centroids = [self.getPairwiseCentroid(range(self._numPoints))]
 
         # For all the other centroids, pick the point that maximizes the distance from all current centroids.
-        for i in range(1, self.k):
+        for i in range(1, self._k):
             # Bail out if no more points are left
-            if (len(centroids) >= len(points)):
+            if (len(centroids) >= self._numPoints):
                 break
 
             index = -1
             maxDistance = -1
-            for j in range(len(points)):
-                if (j in centroidIndexes):
+            for j in range(self._numPoints):
+                if (j in centroids):
                     continue
 
-                distance = self.getTotalDistance(points[j], centroids, distances)
+                distance = self.getTotalDistance(j, centroids)
                 if (index == -1 or distance > maxDistance):
                     index = j
                     maxDistance = distance
 
-            centroidIndexes.append(index)
-            centroids.append(points[index])
+            centroids.append(index)
 
         return centroids
 
     # Calculate all the pairwise distances.
     # This assumes that distance is symmetric.
     def calculatePairwiseDistances(self, points):
-        distances = SymmetricDistances()
+        distances = SymmetricDistances(len(points))
 
-        for i in range(len(points)):
+        for i in range(self._numPoints):
             for j in range(i):
-                distances.put(points[i].id, points[j].id, self.calculatePairwiseDistance(points[i], points[j]))
+                distances.put(i, j, self.calculatePairwiseDistance(points[i], points[j]))
 
         return distances
+
+    def calculatePairwiseDistance(self, a, b):
+        return self._pairwiseDistanceFunction(a.features, b.features)
 
 # Keep track of pairwise distances that are symmetric (ie. the order of the indexes does not matter.
 # This not only assumes symmetry, but also that a point has a zero distance to itself.
 class SymmetricDistances:
-    def __init__(self):
-        self._distances = collections.defaultdict(dict)
+    # Size should be the total number of objects, not the squared size or anything.
+    def __init__(self, size):
+        self._size = size
+        # We are minimizing memory usage here.
+        # If we want to use something smaller than a standard float, we will need to go with numpy.
+        # We will use one array of size (n * (n - 1) / 2).
+        # Note that the int cast is safe since we are multiplying an odd by even.
+        self._distances = array.array('f', int(size * (size - 1) / 2) * [0])
+
+    # We have a skew-symmetric matrix held as a single array.
+    # The index is given by: (row * size) + col - rowModifier(row)
+    # Where rowModifier(row) is the number of total cells skipped by the current row and all before it
+    # (since we are not storing the diagnol and everything below).
+    # rowModifier(row) = rowModifier(row - 1) + (row + 1)
+    # rowModifier(row) = 1/2 * (row + 1) * (row + 2) // Closed form.
+    def _calcIndex(self, row, col):
+        return row * self._size + col - int((row + 1) * (row + 2) / 2)
 
     def put(self, i, j, val):
         if (i == j):
             if (val != 0):
                 raise Exception("Cannot put a non-zero distance in a SymmetricDistances object")
             return
-            
+
         small = min(i, j)
         big = max(i, j)
 
-        self._distances[small][big] = val
+        self._distances[self._calcIndex(small, big)] = val
 
     def get(self, i, j):
         if (i == j):
@@ -179,7 +214,7 @@ class SymmetricDistances:
         small = min(i, j)
         big = max(i, j)
 
-        return self._distances[small][big]
+        return self._distances[self._calcIndex(small, big)]
 
 
 if __name__ == '__main__':
@@ -201,4 +236,4 @@ if __name__ == '__main__':
     clusters = kMeans.cluster(data)
 
     for i in range(len(clusters)):
-        print("Cluster: %02d, Size: %02d - %s" % (i, len(clusters[i]), [str(x.id) for x in clusters[i]]))
+        print("Cluster: %02d, Size: %02d - %s" % (i, len(clusters[i]), [str(x) for x in sorted(clusters[i])]))
