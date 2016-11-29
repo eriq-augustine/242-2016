@@ -42,8 +42,10 @@ def randIndex(assign, goldLabel):
                 except KeyError:
                     #print("One of both keys not found in clusters:" + str( goldLabel[cluster][i]) + "," + str(goldLabel[cluster][j]))
                     pass
-            
-    return (a + b )/(a + b + c + d)
+    randIndex = -1
+    if a+b+c+d != 0:
+        randIndex = (a + b )/(a + b + c + d)
+    return randIndex
 
 def readBusinessIds(filename):
     b_ids = []
@@ -73,4 +75,4 @@ if __name__ == "__main__":
     for c in goldLabel:
         for i in c:
             assign[i] = random.randint(1,clusters)
-    print(metrics.randIndex(assign, goldLabel))
+    print(randIndex(assign, goldLabel))
