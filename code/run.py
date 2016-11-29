@@ -1,13 +1,16 @@
 import clustering
+import data
 import featureDistanceMap
 import features
 import metrics
 
+import argparse
+
 # Arbitrary k at this point.
 K = 10
 
-def run():
-    businesses = features.getBusinesses()
+def run(businessType):
+    businesses = features.getBusinesses(businessType)
 
     # Arbitrary K
     kMeans = clustering.KMeans(K, featureDistanceMap.FeatureDistanceMap())
@@ -24,4 +27,10 @@ def run():
     print("rand index:"  + str(randIndex))
 
 if __name__ == '__main__':
-    run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("businessType",
+                        help = "%s, %s, %s, %s" % (data.DATA_TYPE_DATABASE, data.DATA_TYPE_FAKE, data.DATA_TYPE_FULL, data.DATA_TYPE_TEST),
+                        nargs = '?',
+                        default = data.DATA_TYPE_FAKE)
+    args = parser.parse_args()
+    run(args.businessType)
