@@ -1,9 +1,6 @@
 import business
 import data
 
-# This is mainly for deciding if we are getting real or fake data.
-DEBUG = True
-
 # Query constants
 COLUMN_ID = 0
 COLUMN_YELP_ID = 1
@@ -47,9 +44,9 @@ def oneHot(values):
 
 # TODO(dhawal): Do some feature engineering.
 # As of now, we are only returning numeric features.
-def getBusinesses():
+def getBusinesses(businessType=data.DATA_TYPE_FAKE):
     features = []
-    rawBusinesses = data.getBusinesses(DEBUG)
+    rawBusinesses = data.getBusinesses(businessType)
 
     # one-hot encoding of active, city, and state variables + numeric features
     cityStateMatrix = oneHot([{"active": b[COLUMN_ACTIVE], "city": b[COLUMN_CITY], "state": b[COLUMN_STATE]} for b in rawBusinesses])

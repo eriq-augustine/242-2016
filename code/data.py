@@ -6,6 +6,11 @@ FAKE_BUSINESSES_FILE = 'fakeBusinesses.pickle'
 REAL_BUSINESSES_FILE = 'fullBusinesses.pickle'
 TEST_BUSINESSES_FILE = 'testBusinesses.pickle'
 
+DATA_TYPE_DATABASE = 'database'
+DATA_TYPE_FAKE = 'fake'
+DATA_TYPE_FULL = 'full'
+DATA_TYPE_TEST = 'test'
+
 QUERY_BUSINESSES = '''
     SELECT
         B.id,
@@ -81,11 +86,17 @@ def getBusinessesDB():
 
     return businesses
 
-def getBusinesses(fake = False):
-    if (fake):
+def getBusinesses(businessType):
+    if (businessType == DATA_TYPE_DATABASE):
+        return getBusinessesDB()
+    elif (businessType == DATA_TYPE_FAKE):
         return getFakeBusinesses()
-    return getTestBusinesses()
-    # return getFullBusinesses()
+    elif (businessType == DATA_TYPE_FULL):
+        return getFullBusinesses()
+    elif (businessType == DATA_TYPE_TEST):
+        return getTestBusinesses()
+    else:
+        raise Exception("Unknown business type: %s" % (businessType))
 
 # Just a quick way to get some data to work with without hitting the DB.
 def getFakeBusinesses():
