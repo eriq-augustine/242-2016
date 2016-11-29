@@ -14,8 +14,10 @@ def euclidean(a, b):
     distance = 0
     for i in range(len(a)):
         distance += math.pow(a[i] - b[i], 2)
+    
+    result = math.sqrt(distance)
 
-    return math.sqrt(distance)
+    return 1.0 / (1 + math.exp(-result))
 
 '''
 The manhattan distance for numeric features.
@@ -27,7 +29,8 @@ def manhattan(a, b):
     distance = 0
     for i in range(len(a)):
         distance += math.fabs(a[i] - b[i])
-    return distance
+        
+    return 1.0 / (1 + math.exp(-distance))
 
 '''
 The levenshtein distance for string features.

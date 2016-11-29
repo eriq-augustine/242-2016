@@ -7,19 +7,36 @@ class TestDistance(unittest.TestCase):
     def test_euclideanBase(self):
         a = [0, 0]
         b = [0, 0]
-        self.assertEqual(distance.euclidean(a, b), 0)
+        self.assertAlmostEqual(distance.euclidean(a, b), 0.5, places = 3)
 
         a = [1, 0]
         b = [0, 0]
-        self.assertEqual(distance.euclidean(a, b), 1)
+        self.assertAlmostEqual(distance.euclidean(a, b), 0.7310, places = 3)
 
         a = [0, 0]
         b = [0, 1]
-        self.assertEqual(distance.euclidean(a, b), 1)
+        self.assertAlmostEqual(distance.euclidean(a, b), 0.7310, places = 3)
 
         a = [0, 0]
         b = [1, 1]
-        self.assertEqual(distance.euclidean(a, b), math.sqrt(2))
+        self.assertAlmostEqual(distance.euclidean(a, b), 0.80442, places = 3)
+
+    def test_manhattanBase(self):
+        a = [0, 0]
+        b = [0, 0]
+        self.assertAlmostEqual(distance.manhattan(a, b), 0.5, places = 3)
+
+        a = [1, 0]
+        b = [0, 0]
+        self.assertAlmostEqual(distance.manhattan(a, b), 0.7310, places = 3)
+
+        a = [0, 0]
+        b = [0, 1]
+        self.assertAlmostEqual(distance.manhattan(a, b), 0.7310, places = 3)
+
+        a = [0, 0]
+        b = [1, 1]
+        self.assertAlmostEqual(distance.manhattan(a, b), 0.880797, places = 3)
 
     def test_levenshteinBase(self):
         a = 'abc'
@@ -46,11 +63,6 @@ class TestDistance(unittest.TestCase):
         b = 'xyz'
         self.assertEqual(distance.levenshtein(a, b), 3)
 
-    def test_euclidean(self):
-        self.assertEqual(distance.euclidean([3,4],[0,0]), 5)
-
-    def test_manhattan(self):
-        self.assertEqual(distance.manhattan([3,4],[0,0]), 7)
 
     def test_levenshtein(self):
         self.assertEqual(distance.levenshtein("a","ab"), 1)
