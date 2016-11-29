@@ -14,6 +14,7 @@ def run():
 
     for i in range(len(clusters)):
         print("Cluster: %02d, Size: %02d" % (i, len(clusters[i])))
+        print("         %s" % (", ".join([str(x) for x in sorted([businesses[index].otherInfo['yelpId'] for index in clusters[i]])])))
 
 if __name__ == '__main__':
     run()
