@@ -7,62 +7,186 @@ class TestDistance(unittest.TestCase):
     def test_euclideanBase(self):
         a = [0, 0]
         b = [0, 0]
-        self.assertEqual(distance.euclidean(a, b), 0)
+        self.assertAlmostEqual(distance.euclidean(a, b), 0, places = 3)
 
         a = [1, 0]
         b = [0, 0]
-        self.assertEqual(distance.euclidean(a, b), 1)
+        self.assertAlmostEqual(distance.euclidean(a, b), 0.46199999, places = 3)
 
         a = [0, 0]
         b = [0, 1]
-        self.assertEqual(distance.euclidean(a, b), 1)
+        self.assertAlmostEqual(distance.euclidean(a, b), 0.46199999, places = 3)
 
         a = [0, 0]
         b = [1, 1]
-        self.assertEqual(distance.euclidean(a, b), math.sqrt(2))
+        self.assertAlmostEqual(distance.euclidean(a, b), 0.60884, places = 3)
+
+    def test_manhattanBase(self):
+        a = [0, 0]
+        b = [0, 0]
+        self.assertAlmostEqual(distance.manhattan(a, b), 0, places = 3)
+
+        a = [1, 0]
+        b = [0, 0]
+        self.assertAlmostEqual(distance.manhattan(a, b), 0.462, places = 3)
+
+        a = [0, 0]
+        b = [0, 1]
+        self.assertAlmostEqual(distance.manhattan(a, b), 0.462, places = 3)
+
+        a = [0, 0]
+        b = [1, 1]
+        self.assertAlmostEqual(distance.manhattan(a, b), 0.761594, places = 3)
 
     def test_levenshteinBase(self):
+
+        a = ''
+        b = ''
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0, places = 3)
+
         a = 'abc'
         b = 'abc'
-        self.assertEqual(distance.levenshtein(a, b), 0)
-
-        a = 'abc'
-        b = 'abd'
-        self.assertEqual(distance.levenshtein(a, b), 1)
-
-        a = 'abc'
-        b = 'abz'
-        self.assertEqual(distance.levenshtein(a, b), 1)
-
-        a = 'ab'
-        b = 'abc'
-        self.assertEqual(distance.levenshtein(a, b), 1)
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0, places = 3)
 
         a = 'abcd'
         b = 'abc'
-        self.assertEqual(distance.levenshtein(a, b), 1)
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0.25, places = 3)
+
+        a = 'abc'
+        b = 'abd'
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0.33333, places = 3)
+
+        a = 'ab'
+        b = 'abc'
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0.33333, places = 3)
+
+        a = ''
+        b = 'abc'
+        self.assertAlmostEqual(distance.levenshtein(a, b), 1, places = 3)
+
+        a = 'abc'
+        b = ''
+        self.assertAlmostEqual(distance.levenshtein(a, b), 1, places = 3)
 
         a = 'abc'
         b = 'xyz'
-        self.assertEqual(distance.levenshtein(a, b), 3)
+        self.assertAlmostEqual(distance.levenshtein(a, b), 1, places = 3)
 
-    def test_euclidean(self):
-        self.assertEqual(distance.euclidean([3,4],[0,0]), 5)
+    def test_needleman_wunschBase(self):
+        a = ''
+        b = ''
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0, places = 3)
 
-    def test_manhattan(self):
-        self.assertEqual(distance.manhattan([3,4],[0,0]), 7)
+        a = 'ab'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0, places = 3)
 
-    def test_levenshtein(self):
-        self.assertEqual(distance.levenshtein("a","ab"), 1)
+        a = 'b'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0.5, places = 3)
 
-    def test_needleman_wunsch(self):
-        self.assertEqual(distance.needleman_wunsch("a","ab"), 0)
+        a = 'a'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0.5, places = 3)
+
+        a = 'ac'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0.5, places = 3)
+
+        a = 'ca'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0.75, places = 3)   
+
+        a = 'c'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 1, places = 3) 
+
+        a = ''
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 1, places = 3)  
+
+        a = 'ab'
+        b = ''
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 1, places = 3)  
+
+        a = 'cd'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 1, places = 3)               
 
     def test_jaccard(self):
-        self.assertEqual(distance.jaccard(['spicy','sweet'],['spicy']), 0.5)
+        a = ['a','b']
+        b = ['a','b']
+        self.assertAlmostEqual(distance.jaccard(a, b), 0, places = 3)  
+
+        a = []
+        b = []
+        self.assertAlmostEqual(distance.jaccard(a, b), 0, places = 3)  
+       
+        a = ['a']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.jaccard(a, b), 0.5, places = 3)  
+
+        a = ['b']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.jaccard(a, b), 0.5, places = 3)  
+
+        a = ['a', 'c']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.jaccard(a, b), 0.666666, places = 3) 
+
+        a = ['c']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.jaccard(a, b), 1, places = 3)  
+
+        a = []
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.jaccard(a, b), 1, places = 3)  
+
+        a = ['a', 'b']
+        b = []
+        self.assertAlmostEqual(distance.jaccard(a, b), 1, places = 3)  
+
+        a = ['c', 'd']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.jaccard(a, b), 1, places = 3) 
+
 
     def test_dice(self):
-        self.assertEqual(distance.dice(['spicy','sweet'],['spicy','salt']), 0.5)
+        a = []
+        b = []
+        self.assertAlmostEqual(distance.dice(a, b), 0, places = 3)  
+
+        a = ['a', 'b']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.dice(a, b), 0, places = 3)  
+
+        a = ['a']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.dice(a, b), 0.333333, places = 3)  
+
+        a = ['b']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.dice(a, b), 0.333333, places = 3)  
+
+        a = ['a', 'c']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.dice(a, b), 0.5, places = 3)  
+
+        a = []
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.dice(a, b), 1, places = 3)  
+
+        a = ['a', 'b']
+        b = []
+        self.assertAlmostEqual(distance.dice(a, b), 1, places = 3)  
+
+        a = ['c']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.dice(a, b), 1, places = 3)  
+
+        a = ['c', 'd']
+        b = ['a', 'b']
+        self.assertAlmostEqual(distance.dice(a, b), 1, places = 3)  
 
 if __name__ == '__main__':
     unittest.main()

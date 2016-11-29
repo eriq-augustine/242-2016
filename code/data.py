@@ -4,6 +4,7 @@ import pickle
 
 FAKE_BUSINESSES_FILE = 'fakeBusinesses.pickle'
 REAL_BUSINESSES_FILE = 'fullBusinesses.pickle'
+TEST_BUSINESSES_FILE = 'testBusinesses.pickle'
 
 QUERY_BUSINESSES = '''
     SELECT
@@ -22,6 +23,8 @@ QUERY_BUSINESSES = '''
         COALESCE(W.numWords / R.availableReviewCount, 0) AS meanWordCount
     FROM
         Businesses B
+        -- To limit businesses to only the test set, uncomment this.
+        -- JOIN GroundTruth GT ON GT.businessId = B.id
         JOIN (
             SELECT DISTINCT businessId
             FROM BusinessCategories BC
@@ -89,11 +92,16 @@ def getBusinessesDB():
 def getBusinesses(fake = False):
     if (fake):
         return getFakeBusinesses()
-    return getFullBusinesses()
+    return getTestBusinesses()
+    # return getFullBusinesses()
 
 # Just a quick way to get some data to work with without hitting the DB.
 def getFakeBusinesses():
     return pickle.load(open(FAKE_BUSINESSES_FILE, 'rb'))
+
+# Get the  businesses in our golden set from the pickle.
+def getTestBusinesses():
+    return pickle.load(open(TEST_BUSINESSES_FILE, 'rb'))
 
 # Get the real businesses from the pickle.
 def getFullBusinesses():
@@ -105,4 +113,9 @@ if __name__ == '__main__':
     for business in businesses[:10]:
         print(business)
     # pickle.dump(businesses[:50], open(FAKE_BUSINESSES_FILE, 'wb'))
+
+    # Be very careful about which one you are using.
+    # Look at the query, if your are using the GroundTruth table, then you should be using
+    # the test pickle.
     # pickle.dump(businesses, open(REAL_BUSINESSES_FILE, 'wb'))
+    # pickle.dump(businesses, open(TEST_BUSINESSES_FILE, 'wb'))

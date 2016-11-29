@@ -1,8 +1,15 @@
 import business
-import distance
+import featureDistanceMap
 
 import array
+import math
+import multiprocessing
+import queue
 import random
+import sys
+import time
+
+import numpy
 
 # All clustering classes have a cluster() method.
 
@@ -16,10 +23,10 @@ K_MEANS_DEFAULT_MAX_STEPS = 10
 #  - Holds all pairwise distances as a single array representing a skew-symmetric matrix.
 #  - Only passes around indexes on the original input.
 class KMeans:
-    def __init__(self, k, pairwiseDistance, maxSteps = K_MEANS_DEFAULT_MAX_STEPS):
+    def __init__(self, k, distanceMap, maxSteps = K_MEANS_DEFAULT_MAX_STEPS):
         self._k = k
         # Don't refer to this directly, instead use calculatePairwiseDistance().
-        self._pairwiseDistanceFunction = pairwiseDistance
+        self._distanceMap = distanceMap
         self._maxSteps = maxSteps
         self._clusters = None
 
@@ -164,16 +171,48 @@ class KMeans:
     # Calculate all the pairwise distances.
     # This assumes that distance is symmetric.
     def calculatePairwiseDistances(self, points):
+        numProcs = min(1, multiprocessing.cpu_count() - 1)
+        numComparisons = (int(self._numPoints * (self._numPoints - 1) / 2))
+        workSize = math.ceil(numComparisons / numProcs)
+
         distances = SymmetricDistances(len(points))
 
-        for i in range(self._numPoints):
-            for j in range(i):
-                distances.put(i, j, self.calculatePairwiseDistance(points[i], points[j]))
+        manager = multiprocessing.Manager()
+        outputQueue = multiprocessing.Queue()
+        pointsProxy = manager.list(points)
+
+        procs = []
+        for i in range(numProcs):
+            proc = multiprocessing.Process(
+                    target=worker,
+                    args=(i, workSize, numComparisons, self._distanceMap, pointsProxy, outputQueue))
+            proc.start()
+            procs.append(proc)
+
+        for count in range(numComparisons):
+            val = outputQueue.get()
+            distances.put(val[0], val[1], val[2])
+
+        for proc in procs:
+            proc.join()
 
         return distances
 
     def calculatePairwiseDistance(self, a, b):
-        return self._pairwiseDistanceFunction(a.features, b.features)
+        return self._distanceMap(a, b)
+
+def worker(workerId, workSize, numComparisons, distanceFunction, points, outputQueue):
+    workStart = workerId * workSize
+    workEnd = min(numComparisons, (workerId + 1) * workSize)
+
+    count = -1
+    for i in range(len(points)):
+        for j in range(i):
+            count += 1
+            if (count < workStart or count >= workEnd):
+                continue
+
+            outputQueue.put((i, j, distanceFunction.distance(points[i], points[j])))
 
 # Keep track of pairwise distances that are symmetric (ie. the order of the indexes does not matter.
 # This not only assumes symmetry, but also that a point has a zero distance to itself.
@@ -185,7 +224,13 @@ class SymmetricDistances:
         # If we want to use something smaller than a standard float, we will need to go with numpy.
         # We will use one array of size (n * (n - 1) / 2).
         # Note that the int cast is safe since we are multiplying an odd by even.
-        self._distances = array.array('f', int(size * (size - 1) / 2) * [0])
+        # self._distances = array.array('f', int(size * (size - 1) / 2) * [0])
+
+        # Use only 16-bit floats to save on memory.
+        self._distances = numpy.array([0] * int(size * (size - 1) / 2), dtype="f2")
+        # self._distances = array.array('f', int(size * (size - 1) / 2) * [0])
+
+        # print("Distances Size: %d" % (sys.getsizeof(self._distances)))
 
     # We have a skew-symmetric matrix held as a single array.
     # The index is given by: (row * size) + col - rowModifier(row)
@@ -216,7 +261,6 @@ class SymmetricDistances:
 
         return self._distances[self._calcIndex(small, big)]
 
-
 if __name__ == '__main__':
     data = [
         business.Business(1, [0, 0, 0]),
@@ -232,7 +276,7 @@ if __name__ == '__main__':
         business.Business(9, [112, 112, 112])
     ]
 
-    kMeans = KMeans(3, distance.euclidean)
+    kMeans = KMeans(3, featureDistanceMap.FeatureDistanceMap())
     clusters = kMeans.cluster(data)
 
     for i in range(len(clusters)):
