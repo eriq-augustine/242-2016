@@ -1,6 +1,7 @@
 import clustering
 import distance
 import features
+import metrics
 
 # Arbitrary k at this point.
 K = 10
@@ -12,8 +13,12 @@ def run():
     kMeans = clustering.KMeans(K, distance.euclidean)
     clusters = kMeans.cluster(businesses)
 
-    for i in range(len(clusters)):
-        print("Cluster: %02d, Size: %02d" % (i, len(clusters[i])))
+    #Metrics
+    goldLabel = metrics.readGoldLabel("../data/groundtruth")
+    b_cluster = metrics.getClusterBusinessID(businesses, clusters)
+    randIndex = metrics.randIndex(b_cluster, goldLabel)
+    print("rand index:"  + str(randIndex))
 
+    
 if __name__ == '__main__':
     run()
