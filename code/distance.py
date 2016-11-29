@@ -41,10 +41,12 @@ def levenshtein(a, b):
     # Cornner case
     if a == b:
         return 0
+    if len(a) == 0 and len(b) == 0:
+        return 0
     if len(a) == 0:
-        return len(b)
+        return 1
     if len(b) == 0:
-        return len(a)
+        return 1
 
     # Create work vectors
     v0 = [None] * (len(b) + 1)
@@ -64,7 +66,7 @@ def levenshtein(a, b):
             v1[j + 1] = min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost)
         for j in range(len(v0)):
             v0[j] = v1[j]
-    return v1[len(b)]
+    return 1.0 * v1[len(b)] / max(len(a), len(b))
 
 '''
 The Needleman Wunsch distance for string features.

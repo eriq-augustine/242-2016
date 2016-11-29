@@ -39,33 +39,38 @@ class TestDistance(unittest.TestCase):
         self.assertAlmostEqual(distance.manhattan(a, b), 0.880797, places = 3)
 
     def test_levenshteinBase(self):
+        a = ''
+        b = 'abc'
+        self.assertAlmostEqual(distance.levenshtein(a, b), 1, places = 3)
+
+        a = 'abc'
+        b = ''
+        self.assertAlmostEqual(distance.levenshtein(a, b), 1, places = 3)
+
+        a = ''
+        b = ''
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0, places = 3)
+
         a = 'abc'
         b = 'abc'
-        self.assertEqual(distance.levenshtein(a, b), 0)
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0, places = 3)
 
         a = 'abc'
         b = 'abd'
-        self.assertEqual(distance.levenshtein(a, b), 1)
-
-        a = 'abc'
-        b = 'abz'
-        self.assertEqual(distance.levenshtein(a, b), 1)
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0.33333, places = 3)
 
         a = 'ab'
         b = 'abc'
-        self.assertEqual(distance.levenshtein(a, b), 1)
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0.33333, places = 3)
 
         a = 'abcd'
         b = 'abc'
-        self.assertEqual(distance.levenshtein(a, b), 1)
+        self.assertAlmostEqual(distance.levenshtein(a, b), 0.25, places = 3)
 
         a = 'abc'
         b = 'xyz'
-        self.assertEqual(distance.levenshtein(a, b), 3)
+        self.assertAlmostEqual(distance.levenshtein(a, b), 1, places = 3)
 
-
-    def test_levenshtein(self):
-        self.assertEqual(distance.levenshtein("a","ab"), 1)
 
     def test_needleman_wunsch(self):
         self.assertEqual(distance.needleman_wunsch("a","ab"), 0)
