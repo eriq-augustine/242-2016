@@ -14,6 +14,7 @@ QUERY_BUSINESSES = '''
         B.state,
         B.stars,
         B.reviewCount AS totalReviewCount,
+        COALESCE(A.attributes, '') AS attributes, 
         COALESCE(R.availableReviewCount, 0) AS availableReviewCount,
         COALESCE(R.meanReviewLen, 0) AS meanReviewLen,
         COALESCE(W.meanWordLen, 0) AS meanWordLen,
@@ -33,7 +34,14 @@ QUERY_BUSINESSES = '''
         LEFT JOIN (
             SELECT
                 businessId,
-                AVG(CHAR_LENGTH(REGEXP_REPLACE(text, E'\\s+', '', 'g'))) as meanReviewLen,
+                STRING_AGG(CONCAT(name, '::', value), ';;') AS attributes,
+            FROM BusinessAttributes
+            GROUP BY businessId
+        ) A ON A.businessId = B.id
+        LEFT JOIN (
+            SELECT
+                businessId,
+                AVG(CHAR_LENGTH(REGEXP_REPLACE(text, E'\\s+', '', 'g'))) AS meanReviewLen,
                 COUNT(*) AS availableReviewCount
             FROM Reviews
             GROUP BY businessId
