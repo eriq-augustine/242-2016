@@ -2,7 +2,7 @@ import unittest
 
 import business
 import clustering
-import distance
+import featureDistanceMap
 
 class TestClustering(unittest.TestCase):
     def test_kmeansBase(self):
@@ -26,7 +26,7 @@ class TestClustering(unittest.TestCase):
             [6, 7, 8]
         ]
 
-        kMeans = clustering.KMeans(3, distance.euclidean)
+        kMeans = clustering.KMeans(3, featureDistanceMap.FeatureDistanceMap())
         self.assertEqual(sorted(kMeans.cluster(data)), sorted(expected))
 
 if __name__ == '__main__':

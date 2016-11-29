@@ -1,5 +1,5 @@
 import clustering
-import distance
+import featureDistanceMap
 import features
 import metrics
 
@@ -10,7 +10,7 @@ def run():
     businesses = features.getBusinesses()
 
     # Arbitrary K
-    kMeans = clustering.KMeans(K, distance.euclidean)
+    kMeans = clustering.KMeans(K, featureDistanceMap.FeatureDistanceMap())
     clusters = kMeans.cluster(businesses)
 
     for i in range(len(clusters)):
