@@ -71,9 +71,49 @@ class TestDistance(unittest.TestCase):
         b = 'xyz'
         self.assertAlmostEqual(distance.levenshtein(a, b), 1, places = 3)
 
+    def test_needleman_wunschBase(self):
+        a = ''
+        b = ''
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 1, places = 3)
 
-    def test_needleman_wunsch(self):
-        self.assertEqual(distance.needleman_wunsch("a","ab"), 0)
+        a = 'ab'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 1, places = 3)
+
+        a = 'b'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0.5, places = 3)
+
+        a = 'a'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0.5, places = 3)
+
+        a = 'ac'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0.5, places = 3)
+
+        a = 'ca'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0.25, places = 3)   
+
+        a = 'c'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0, places = 3) 
+
+        a = ''
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0, places = 3)  
+
+        a = 'ab'
+        b = ''
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0, places = 3)  
+
+        a = 'cd'
+        b = 'ab'
+        self.assertAlmostEqual(distance.needleman_wunsch(a, b), 0, places = 3)               
+
+
+
 
     def test_jaccard(self):
         self.assertEqual(distance.jaccard(['spicy','sweet'],['spicy']), 0.5)

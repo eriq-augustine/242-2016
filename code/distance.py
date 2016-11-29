@@ -66,6 +66,7 @@ def levenshtein(a, b):
             v1[j + 1] = min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost)
         for j in range(len(v0)):
             v0[j] = v1[j]
+
     return 1.0 * v1[len(b)] / max(len(a), len(b))
 
 '''
@@ -74,6 +75,10 @@ Matches are given +1, mismatches are given -1 and indels are given -1
 '''
 # Pre: a and b are string variales
 def needleman_wunsch(a,b):
+    #Conner case
+    if len(a) == 0 and len(b) == 0:
+        return 1
+
     state = numpy.zeros((len(a) + 1, len(b) + 1))
     # set the initial values for state matrix
     for i in range(1, len(a) + 1):
@@ -89,7 +94,10 @@ def needleman_wunsch(a,b):
             else:
                 diagonal -= 1
             state[i][j] = max(diagonal, state[i - 1][j] - 1, state[i][j - 1] - 1)
-    return state[len(a)][len(b)]
+
+    result = state[len(a)][len(b)]
+    maxLen = max(len(a), len(b))
+    return 1.0 * (result + maxLen) / (2 * maxLen)
 
 '''
 The Jaccard index (similarity) for set features.
