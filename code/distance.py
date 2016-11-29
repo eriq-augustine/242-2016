@@ -16,8 +16,9 @@ def euclidean(a, b):
         distance += math.pow(a[i] - b[i], 2)
     
     result = math.sqrt(distance)
+    logisticValue = 1.0 / (1 + math.exp(-result))
 
-    return 1.0 / (1 + math.exp(-result))
+    return (logisticValue - 0.5) * 2
 
 '''
 The manhattan distance for numeric features.
@@ -29,8 +30,9 @@ def manhattan(a, b):
     distance = 0
     for i in range(len(a)):
         distance += math.fabs(a[i] - b[i])
-        
-    return 1.0 / (1 + math.exp(-distance))
+    
+    logisticValue = 1.0 / (1 + math.exp(-distance))
+    return (logisticValue - 0.5) * 2
 
 '''
 The levenshtein distance for string features.
@@ -77,7 +79,7 @@ Matches are given +1, mismatches are given -1 and indels are given -1
 def needleman_wunsch(a,b):
     #Conner case
     if len(a) == 0 and len(b) == 0:
-        return 1
+        return 0
 
     state = numpy.zeros((len(a) + 1, len(b) + 1))
     # set the initial values for state matrix
@@ -97,7 +99,7 @@ def needleman_wunsch(a,b):
 
     result = state[len(a)][len(b)]
     maxLen = max(len(a), len(b))
-    return 1.0 * (result + maxLen) / (2 * maxLen)
+    return 1.0 * (result - maxLen) / (-2 * maxLen)
 
 '''
 The Jaccard index (similarity) for set features.
@@ -107,13 +109,13 @@ def jaccard(a,b):
 
     #Cornner case
     if len(a) == 0 and len(b) == 0:
-        return 1
+        return 0
 
     a = set(a)
     b = set(b)
     intersection = len(a.intersection(b))
     union = len(a.union(b))
-    return 1.0 * intersection / (union)
+    return 1 - 1.0 * intersection / (union)
 
 '''
 Dice coefficient for set features.
@@ -123,9 +125,9 @@ def dice(a,b):
 
     #Conner case
     if len(a) == 0 and len(b) == 0:
-        return 1
+        return 0
 
     a = set(a)
     b = set(b)
     intersection = len(a.intersection(b))
-    return 2.0 * intersection / (len(a) + len(b))
+    return 1 - 2.0 * intersection / (len(a) + len(b))
