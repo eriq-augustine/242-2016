@@ -42,13 +42,18 @@ class KMeans:
         if (self._clusters != None):
             return clusters
 
+        start = int(round(time.time() * 1000))
+
         self._numPoints = len(points)
         self._distances = self.calculatePairwiseDistances(points)
 
-        self._clusters = self.kmeans()
+        self._clusters, iterations = self.kmeans()
 
         self._numPoints = 0
         self._distances = None
+
+        end = int(round(time.time() * 1000))
+        print("Clustering finished in %d / %d iterations - %d milliseconds." % (iterations, self._maxSteps, end - start))
 
         return self._clusters
 
@@ -62,6 +67,7 @@ class KMeans:
         # (a point moving between two different clusters which can prevent us from halting early).
         oldClusters = None
 
+        iterations = 0
         stop = False
         for i in range(self._maxSteps):
             newClusters = [[] for x in centroids]
@@ -80,10 +86,12 @@ class KMeans:
             clusters = newClusters
             centroids = newCentroids
 
+            iterations += 1
+
             if (stop):
                 break
 
-        return clusters
+        return clusters, iterations
 
     def checkForStop(self, oldClusters, clusters, newClusters):
         if (oldClusters == None or clusters == None):
@@ -172,7 +180,7 @@ class KMeans:
     # Calculate all the pairwise distances.
     # This assumes that distance is symmetric.
     def calculatePairwiseDistances(self, points):
-        numProcs = min(1, multiprocessing.cpu_count() - 1)
+        numProcs = min(1, multiprocessing.cpu_count() + 1)
         numComparisons = (int(self._numPoints * (self._numPoints - 1) / 2))
         workSize = math.ceil(numComparisons / numProcs)
 
