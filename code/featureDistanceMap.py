@@ -7,11 +7,13 @@ MEAN_REVIEW_LEN = 3
 MEAN_WORD_LEN = 4
 NUM_WORDS = 5
 MEAN_WORD_COUNT = 6
-ATTRIBUTES = 7
-CATEGORIES = 8
-TOP_WORDS = 9
-KEY_WORDS = 10
-NUM_FEATURES = 11
+TOTAL_HOURS = 7
+ATTRIBUTES = 8
+CATEGORIES = 9
+TOP_WORDS = 10
+KEY_WORDS = 11
+OPEN_HOURS = 12
+NUM_FEATURES = 13
 
 class FeatureDistanceMap:
     def __init__(self, mapping = None, weights = None):
@@ -33,10 +35,12 @@ class FeatureDistanceMap:
             self._mapping[MEAN_WORD_LEN] = self._distanceMetrics['manhattan']
             self._mapping[NUM_WORDS] = self._distanceMetrics['manhattan']
             self._mapping[MEAN_WORD_COUNT] = self._distanceMetrics['manhattan']
+            self._mapping[TOTAL_HOURS] = self._distanceMetrics['manhattan']
             self._mapping[ATTRIBUTES] = self._distanceMetrics['jaccard']
             self._mapping[CATEGORIES] = self._distanceMetrics['jaccard']
             self._mapping[TOP_WORDS] = self._distanceMetrics['jaccard']
             self._mapping[KEY_WORDS] = self._distanceMetrics['jaccard']
+            self._mapping[OPEN_HOURS] = self._distanceMetrics['jaccard']
 
         self._weights = weights
         if (self._weights == None):
