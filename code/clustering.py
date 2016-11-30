@@ -1,4 +1,5 @@
 import business
+import distance
 import featureDistanceMap
 
 import array
@@ -276,7 +277,8 @@ if __name__ == '__main__':
         business.Business(9, [112, 112, 112])
     ]
 
-    kMeans = KMeans(3, featureDistanceMap.FeatureDistanceMap())
+    manhattan = lambda a, b: distance.manhattan([a], [b])
+    kMeans = KMeans(3, featureDistanceMap.FeatureDistanceMap([manhattan, manhattan, manhattan]))
     clusters = kMeans.cluster(data)
 
     for i in range(len(clusters)):

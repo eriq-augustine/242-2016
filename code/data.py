@@ -15,12 +15,14 @@ QUERY_BUSINESSES = '''
     SELECT
         B.id,
         B.yelpId,
+        B.name,
         B.active,
         B.city,
         B.state,
         B.stars,
         B.reviewCount AS totalReviewCount,
-        COALESCE(A.attributes, '') AS attributes, 
+        COALESCE(A.attributes, '') AS attributes,
+        COALESCE(C.categories, '') AS categories,
         COALESCE(R.availableReviewCount, 0) AS availableReviewCount,
         COALESCE(R.meanReviewLen, 0) AS meanReviewLen,
         COALESCE(W.meanWordLen, 0) AS meanWordLen,
@@ -42,10 +44,17 @@ QUERY_BUSINESSES = '''
         LEFT JOIN (
             SELECT
                 businessId,
-                STRING_AGG(CONCAT(name, '::', value), ';;') AS attributes,
+                STRING_AGG(CONCAT(name, '::', value), ';;') AS attributes
             FROM BusinessAttributes
             GROUP BY businessId
         ) A ON A.businessId = B.id
+        LEFT JOIN (
+            SELECT
+                businessId,
+                STRING_AGG(name, ';;') AS categories
+            FROM BusinessCategories
+            GROUP BY businessId
+        ) C on C.businessId = B.id
         LEFT JOIN (
             SELECT
                 businessId,
@@ -123,7 +132,7 @@ if __name__ == '__main__':
     print(len(businesses))
     for business in businesses[:10]:
         print(business)
-    # pickle.dump(businesses[:50], open(FAKE_BUSINESSES_FILE, 'wb'))
+    # pickle.dump(businesses[:100], open(FAKE_BUSINESSES_FILE, 'wb'))
 
     # Be very careful about which one you are using.
     # Look at the query, if your are using the GroundTruth table, then you should be using

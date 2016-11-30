@@ -2,6 +2,7 @@ import unittest
 
 import business
 import clustering
+import distance
 import featureDistanceMap
 
 class TestClustering(unittest.TestCase):
@@ -26,7 +27,8 @@ class TestClustering(unittest.TestCase):
             [6, 7, 8]
         ]
 
-        kMeans = clustering.KMeans(3, featureDistanceMap.FeatureDistanceMap())
+        manhattan = lambda a, b: distance.manhattan([a], [b])
+        kMeans = clustering.KMeans(3, featureDistanceMap.FeatureDistanceMap([manhattan, manhattan, manhattan]))
         self.assertEqual(sorted(kMeans.cluster(data)), sorted(expected))
 
 if __name__ == '__main__':

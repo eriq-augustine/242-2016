@@ -4,10 +4,19 @@ import data
 # Query constants
 COLUMN_ID = 0
 COLUMN_YELP_ID = 1
-COLUMN_ACTIVE = 2
-COLUMN_CITY = 3
-COLUMN_STATE = 4
-COLUMN_NUMERIC_START = 5
+COLUMN_NAME = 2
+COLUMN_ACTIVE = 3
+COLUMN_CITY = 4
+COLUMN_STATE = 5
+COLUMN_STARS = 6
+COLUMN_TOTAL_REVIEW_COUNT = 7
+COLUMN_ATTRIBUTES = 8
+COLUMN_CATEGORIES = 9
+COLUMN_AVAILABLE_REVIEW_COUNT = 10
+COLUMN_MEAN_REVIEW_LEN = 11
+COLUMN_MEAN_WORD_LEN = 12
+COLUMN_NUM_WORDS = 13
+COLUMN_MEAN_WORD_COUNT = 14
 
 # Takes a list of maps and converts it to a single one-hot encoding.
 # [{"key1": val1, "key2", val2}, ...]
@@ -42,17 +51,54 @@ def oneHot(values):
 
     return rtn
 
-# TODO(dhawal): Do some feature engineering.
-# As of now, we are only returning numeric features.
+def buildMap(businesses, column):
+    attributeMap = {}
+    count = 0
+
+    for business in businesses:
+        for attribute in business[column].split(';;'):
+            if attribute not in attributeMap:
+                attributeMap[attribute] = count
+                count += 1
+
+    return attributeMap
+
+def extractFeatures(rawBusiness, attributeMap, categoryMap):
+    featureVector = []
+    numericColumns = [
+        COLUMN_STARS,
+        COLUMN_TOTAL_REVIEW_COUNT,
+        COLUMN_AVAILABLE_REVIEW_COUNT,
+        COLUMN_MEAN_REVIEW_LEN,
+        COLUMN_MEAN_WORD_LEN,
+        COLUMN_NUM_WORDS,
+        COLUMN_MEAN_WORD_COUNT,
+    ]
+
+    for column in numericColumns:
+        featureVector.append(rawBusiness[column])
+
+    attributes = [attributeMap[ele] for ele in rawBusiness[COLUMN_ATTRIBUTES].split(';;')]
+    featureVector.append(attributes)
+    categories = [categoryMap[ele] for ele in rawBusiness[COLUMN_CATEGORIES].split(';;')]
+    featureVector.append(categories)
+
+    otherInfo = {
+        "yelpId": rawBusiness[COLUMN_YELP_ID],
+        "name": rawBusiness[COLUMN_NAME]
+    }
+
+    return business.Business(rawBusiness[COLUMN_ID], featureVector, otherInfo)
+
 def getBusinesses(businessType=data.DATA_TYPE_FAKE):
     features = []
     rawBusinesses = data.getBusinesses(businessType)
 
-    # one-hot encoding of active, city, and state variables + numeric features
-    cityStateMatrix = oneHot([{"active": b[COLUMN_ACTIVE], "city": b[COLUMN_CITY], "state": b[COLUMN_STATE]} for b in rawBusinesses])
-    features = [list(rawBusinesses[i][COLUMN_NUMERIC_START:]) + cityStateMatrix[i] for i in range(len(rawBusinesses))]
+    attributeMap = buildMap(rawBusinesses, COLUMN_ATTRIBUTES)
+    categoryMap = buildMap(rawBusinesses, COLUMN_CATEGORIES)
 
-    return [business.Business(rawBusinesses[i][COLUMN_ID], features[i], {"yelpId": rawBusinesses[i][COLUMN_YELP_ID]}) for i in range(len(rawBusinesses))]
+    businesses = [extractFeatures(business, attributeMap, categoryMap) for business in rawBusinesses]
+    return businesses
 
 if __name__ == '__main__':
     businesses = getBusinesses()
