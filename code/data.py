@@ -21,13 +21,15 @@ QUERY_BUSINESSES = '''
         B.state,
         B.stars,
         B.reviewCount AS totalReviewCount,
-        COALESCE(A.attributes, '') AS attributes,
-        COALESCE(C.categories, '') AS categories,
+        COALESCE(A.value, '') AS attributes,
+        COALESCE(C.value, '') AS categories,
         COALESCE(R.availableReviewCount, 0) AS availableReviewCount,
         COALESCE(R.meanReviewLen, 0) AS meanReviewLen,
         COALESCE(W.meanWordLen, 0) AS meanWordLen,
         COALESCE(W.numWords, 0) AS numWords,
-        COALESCE(W.numWords / R.availableReviewCount, 0) AS meanWordCount
+        COALESCE(W.numWords / R.availableReviewCount, 0) AS meanWordCount,
+        COALESCE(RSP.topWords, '') AS topWords,
+        COALESCE(RSP.keyWords, '') AS keyWords
     FROM
         Businesses B
         -- To limit businesses to only the test set, uncomment this.
@@ -41,43 +43,18 @@ QUERY_BUSINESSES = '''
                 'Chinese', 'American (New)', 'Breakfast & Brunch', 'Cafes'
             )
         ) Restaurants ON Restaurants.businessId = B.id
+        LEFT JOIN BusinessAttributesAggregate A ON A.businessId = B.id
+        LEFT JOIN BusinessCategoriesAggregate C on C.businessId = B.id
+        LEFT JOIN ReviewStats R ON R.businessId = B.id
         LEFT JOIN (
             SELECT
                 businessId,
-                STRING_AGG(CONCAT(name, '::', value), ';;') AS attributes
-            FROM BusinessAttributes
-            GROUP BY businessId
-        ) A ON A.businessId = B.id
-        LEFT JOIN (
-            SELECT
-                businessId,
-                STRING_AGG(name, ';;') AS categories
-            FROM BusinessCategories
-            GROUP BY businessId
-        ) C on C.businessId = B.id
-        LEFT JOIN (
-            SELECT
-                businessId,
-                AVG(CHAR_LENGTH(REGEXP_REPLACE(text, E'\\s+', '', 'g'))) AS meanReviewLen,
-                COUNT(*) AS availableReviewCount
-            FROM Reviews
-            GROUP BY businessId
-        ) R ON R.businessId = B.id
-        LEFT JOIN (
-            SELECT
-                businessId,
-                COUNT(*) AS numWords,
-                AVG(wordLen) AS meanWordLen
-            FROM (
-                SELECT
-                    businessId,
-                    CHAR_LENGTH(REGEXP_SPLIT_TO_TABLE(text, E'\\s+')) AS wordLen
-                FROM Reviews
-                -- If you want a just a test set quickly, the uncomment the next line.
-                -- WHERE businessId <= 20
-            ) X
+                SUM(wordCount) AS numWords,
+                AVG(CHAR_LENGTH(word)) AS meanWordLen
+            FROM ReviewWords
             GROUP BY businessId
         ) W ON W.businessId = B.id
+        LEFT JOIN ReviewSpecialWords RSP ON RSP.businessId = B.id
     -- If you want a just a test set quickly, the uncomment the next line.
     -- LIMIT 20
 '''
