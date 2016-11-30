@@ -134,3 +134,41 @@ def dice(a,b):
     b = set(b)
     intersection = len(a.intersection(b))
     return 1 - 2.0 * intersection / (len(a) + len(b))
+
+'''
+Jacard distance extension
+'''
+# Pre: a and b are list of boolean 
+def jacardExtend(a,b):
+
+    #Cornner case
+    if len(a) == 0 and len(b) == 0:
+        return 0
+
+    union = max(len(a), len(b))
+    minLen = min(len(a), len(b))
+    intersection = 0
+    for i in range(minLen):
+        if a[i] == b[i]:
+            intersection += 1
+    return 1 - 1.0 * intersection / (union)
+
+'''
+Dice distance extension
+'''
+# Pre: a and b are list of boolean
+def diceExtend(a,b):
+
+    #Cornner case
+    if len(a) == 0 and len(b) == 0:
+        return 0
+
+    minLen = min(len(a), len(b))
+    intersection = 0
+    for i in range(minLen):
+        if a[i] == b[i]:
+            intersection += 1
+    return 1 - 2.0 * intersection / (len(a) + len(b))
+
+    
+

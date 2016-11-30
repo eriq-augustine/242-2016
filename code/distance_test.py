@@ -200,5 +200,41 @@ class TestDistance(unittest.TestCase):
         b = ['a', 'b']
         self.assertAlmostEqual(distance.dice(a, b), 1, places = 3)  
 
+
+    def test_jacardExtend(self):
+        a = []
+        b = []
+        self.assertAlmostEqual(distance.jacardExtend(a, b), 0, places = 3)  
+
+        a = [True, False]
+        b = [True, False]
+        self.assertAlmostEqual(distance.jacardExtend(a, b), 0, places = 3)  
+
+        a = [False]
+        b = [False, True]
+        self.assertAlmostEqual(distance.jacardExtend(a, b), 0.5, places = 3)  
+
+        a = [True, False]
+        b = [False, True]
+        self.assertAlmostEqual(distance.jacardExtend(a, b), 1, places = 3)  
+
+    def test_diceExtend(self):
+        a = []
+        b = []
+        self.assertAlmostEqual(distance.diceExtend(a, b), 0, places = 3)  
+
+        a = [True, False]
+        b = [True, False]
+        self.assertAlmostEqual(distance.diceExtend(a, b), 0, places = 3)  
+
+        a = [False]
+        b = [False, True]
+        self.assertAlmostEqual(distance.diceExtend(a, b), 0.333333, places = 3)  
+
+        a = [True, False]
+        b = [False, True]
+        self.assertAlmostEqual(distance.diceExtend(a, b), 1, places = 3) 
+
+
 if __name__ == '__main__':
     unittest.main()
