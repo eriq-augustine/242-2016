@@ -15,7 +15,7 @@ class FeatureDistanceMap:
     def __init__(self, mappings = None):
         self._distanceMetrics = {
             'euclidean': lambda a, b: distance.euclidean([a], [b]),
-            'manhattan': lambda a, b: distance.manhattan([a], [b]),
+            'manhattan': distance.manhattanScalar,
             'levenshtein': lambda a, b: distance.levenshtein([a], [b]),
             'needleman_wunsch': lambda a, b: distance.needleman_wunsch([a], [b]),
             'jaccard': distance.jaccard

@@ -34,6 +34,9 @@ def manhattan(a, b):
     logisticValue = 1.0 / (1 + math.exp(-distance))
     return (logisticValue - 0.5) * 2
 
+def manhattanScalar(a, b):
+    logisticValue = 1.0 / (1 + math.exp(-math.fabs(a - b)))
+    return (logisticValue - 0.5) * 2
 '''
 The levenshtein distance for string features.
 '''

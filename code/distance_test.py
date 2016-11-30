@@ -21,6 +21,18 @@ class TestDistance(unittest.TestCase):
         b = [1, 1]
         self.assertAlmostEqual(distance.euclidean(a, b), 0.60884, places = 3)
 
+    def test_manhattanScalarBase(self):
+        testCases = [
+            (0, 0, 0),
+            (-1, 0, 0.462),
+            (0, 1, 0.462),
+            (1, 1, 0),
+            (1, -1, 0.7616)
+        ]
+
+        for testCase in testCases:
+            self.assertAlmostEqual(distance.manhattanScalar(testCase[0], testCase[1]), testCase[2], places = 3)
+
     def test_manhattanBase(self):
         a = [0, 0]
         b = [0, 0]
