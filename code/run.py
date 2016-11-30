@@ -18,7 +18,7 @@ def run(businessType):
 
     for i in range(len(clusters)):
         print("Cluster: %02d, Size: %02d" % (i, len(clusters[i])))
-        print("         %s" % (", ".join([str(x) for x in sorted([businesses[index].otherInfo['yelpId'] for index in clusters[i]])])))
+        print("         %s" % (", ".join([str(x) for x in sorted([businesses[index].otherInfo['name'] for index in clusters[i]])])))
 
     #Metrics
     goldLabel = metrics.readGoldLabel("../data/groundtruth")
