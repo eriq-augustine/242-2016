@@ -4,11 +4,20 @@ import numpy
 # Do not feel limited to use only this file, but whoever wants to use distance things
 # should just have to import this one file.
 
+def logisticNormalize(val):
+    return ((1.0 / (1 + math.exp(-val))) - 0.5) * 2
+
+def logNormalize(val):
+    return math.log(max(1, val))
+
+def noNormalize(val):
+    return val
+
 '''
 The euclidean distance for numeric features.
 '''
 # Pre: |a| and |b| are collections of numeric values.
-def euclidean(a, b):
+def euclidean(a, b, normalization = logisticNormalize):
     assert(len(a) == len(b))
 
     distance = 0
@@ -16,27 +25,24 @@ def euclidean(a, b):
         distance += math.pow(a[i] - b[i], 2)
     
     result = math.sqrt(distance)
-    logisticValue = 1.0 / (1 + math.exp(-result))
-
-    return (logisticValue - 0.5) * 2
+    return normalization(result)
 
 '''
 The manhattan distance for numeric features.
 '''
 # Pre: a and b are two string variables
-def manhattan(a, b):
+def manhattan(a, b, normalization = logisticNormalize):
     assert(len(a) == len(b))
 
     distance = 0
     for i in range(len(a)):
         distance += math.fabs(a[i] - b[i])
     
-    logisticValue = 1.0 / (1 + math.exp(-distance))
-    return (logisticValue - 0.5) * 2
+    return normalization(distance)
 
-def manhattanScalar(a, b):
-    logisticValue = 1.0 / (1 + math.exp(-math.fabs(a - b)))
-    return (logisticValue - 0.5) * 2
+def manhattanScalar(a, b, normalization = logisticNormalize):
+    return normalization(math.fabs(a - b))
+
 '''
 The levenshtein distance for string features.
 '''

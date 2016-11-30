@@ -8,6 +8,7 @@ class TestDistance(unittest.TestCase):
         a = [0, 0]
         b = [0, 0]
         self.assertAlmostEqual(distance.euclidean(a, b), 0, places = 3)
+        self.assertAlmostEqual(distance.euclidean(a, b, distance.logNormalize), 0, places = 3)
 
         a = [1, 0]
         b = [0, 0]
@@ -23,15 +24,17 @@ class TestDistance(unittest.TestCase):
 
     def test_manhattanScalarBase(self):
         testCases = [
-            (0, 0, 0),
-            (-1, 0, 0.462),
-            (0, 1, 0.462),
-            (1, 1, 0),
-            (1, -1, 0.7616)
+            (0, 0, 0, 0, 0),
+            (-1, 0, 1, 0, 0.462),
+            (0, 1, 1, 0, 0.462),
+            (1, 1, 0, 0, 0),
+            (1, -1, 2, 0.693, 0.7616)
         ]
 
         for testCase in testCases:
-            self.assertAlmostEqual(distance.manhattanScalar(testCase[0], testCase[1]), testCase[2], places = 3)
+            self.assertAlmostEqual(distance.manhattanScalar(testCase[0], testCase[1], distance.noNormalize), testCase[2], places = 3)
+            self.assertAlmostEqual(distance.manhattanScalar(testCase[0], testCase[1], distance.logNormalize), testCase[3], places = 3)
+            self.assertAlmostEqual(distance.manhattanScalar(testCase[0], testCase[1], distance.logisticNormalize), testCase[4], places = 3)
 
     def test_manhattanBase(self):
         a = [0, 0]
