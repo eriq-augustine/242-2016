@@ -573,4 +573,6 @@ VALUES
    ('zero')
 ;
 
+CREATE INDEX IX_Stopwords_word_id ON Stopwords (word, id);
+
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ml242;
