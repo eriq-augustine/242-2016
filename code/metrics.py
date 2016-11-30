@@ -6,7 +6,9 @@ import random
 #goldLabel = list of lists of same cluster buisnesses
 #https://en.wikipedia.org/wiki/Rand_index (for more info on rand index)
 
-restaurant_files = ['burgerking.id', 'chipotle.id', 'dairyqueen.id', 'dominospizza.id', 'dunkindonut.id', 'jackinthebox.id', 'kfc.id', 'mcdonalds.id', 'pandaexpress.id', 'papajohnspizza.id', 'pizzahut.id', 'starbucks.id', 'subway.id', 'subway.id', 'wendys.id', 'finedining.id']
+def getRestaurantFiles():
+    restaurant_files = ['burgerking.id', 'chipotle.id', 'dairyqueen.id', 'dominospizza.id', 'dunkindonut.id', 'jackinthebox.id', 'kfc.id', 'mcdonalds.id', 'pandaexpress.id', 'papajohnspizza.id', 'pizzahut.id', 'starbucks.id', 'subway.id', 'subway.id', 'wendys.id', 'finedining.id']
+    return restaurant_files
 
 def randIndex(assign, goldLabel):
     a = 0.0
@@ -56,6 +58,8 @@ def readBusinessIds(filename):
 
 def readGoldLabel(directory):
     goldLabel = {}
+    restaurant_files = getRestaurantFiles()
+
     for f in restaurant_files:
         goldLabel[f] = readBusinessIds(os.path.join(directory, f))
     return goldLabel
