@@ -17,6 +17,8 @@ COLUMN_MEAN_REVIEW_LEN = 11
 COLUMN_MEAN_WORD_LEN = 12
 COLUMN_NUM_WORDS = 13
 COLUMN_MEAN_WORD_COUNT = 14
+COLUMN_TOP_WORDS = 15
+COLUMN_KEY_WORDS = 16
 
 # Takes a list of maps and converts it to a single one-hot encoding.
 # [{"key1": val1, "key2", val2}, ...]
@@ -63,7 +65,7 @@ def buildMap(businesses, column):
 
     return attributeMap
 
-def extractFeatures(rawBusiness, attributeMap, categoryMap):
+def extractFeatures(rawBusiness, attributeMap, categoryMap, topWordMap, keyWordMap):
     featureVector = []
     numericColumns = [
         COLUMN_STARS,
@@ -80,8 +82,15 @@ def extractFeatures(rawBusiness, attributeMap, categoryMap):
 
     attributes = [attributeMap[ele] for ele in rawBusiness[COLUMN_ATTRIBUTES].split(';;')]
     featureVector.append(attributes)
+
     categories = [categoryMap[ele] for ele in rawBusiness[COLUMN_CATEGORIES].split(';;')]
     featureVector.append(categories)
+
+    topWords = [topWordMap[ele] for ele in rawBusiness[COLUMN_TOP_WORDS].split(';;')]
+    featureVector.append(topWords)
+
+    keyWords = [keyWordMap[ele] for ele in rawBusiness[COLUMN_KEY_WORDS].split(';;')]
+    featureVector.append(keyWords)
 
     otherInfo = {
         "yelpId": rawBusiness[COLUMN_YELP_ID],
@@ -96,8 +105,10 @@ def getBusinesses(businessType=data.DATA_TYPE_FAKE):
 
     attributeMap = buildMap(rawBusinesses, COLUMN_ATTRIBUTES)
     categoryMap = buildMap(rawBusinesses, COLUMN_CATEGORIES)
+    topWordMap = buildMap(rawBusinesses, COLUMN_TOP_WORDS)
+    keyWordMap = buildMap(rawBusinesses, COLUMN_KEY_WORDS)
 
-    businesses = [extractFeatures(business, attributeMap, categoryMap) for business in rawBusinesses]
+    businesses = [extractFeatures(business, attributeMap, categoryMap, topWordMap, keyWordMap) for business in rawBusinesses]
     return businesses
 
 if __name__ == '__main__':

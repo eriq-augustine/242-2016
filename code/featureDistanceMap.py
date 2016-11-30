@@ -9,7 +9,9 @@ NUM_WORDS = 5
 MEAN_WORD_COUNT = 6
 ATTRIBUTES = 7
 CATEGORIES = 8
-NUM_FEATURES = 9
+TOP_WORDS = 9
+KEY_WORDS = 10
+NUM_FEATURES = 11
 
 class FeatureDistanceMap:
     def __init__(self, mappings = None):
@@ -33,6 +35,8 @@ class FeatureDistanceMap:
             self._mapping[MEAN_WORD_COUNT] = self._distanceMetrics['manhattan']
             self._mapping[ATTRIBUTES] = self._distanceMetrics['jaccard']
             self._mapping[CATEGORIES] = self._distanceMetrics['jaccard']
+            self._mapping[TOP_WORDS] = self._distanceMetrics['jaccard']
+            self._mapping[KEY_WORDS] = self._distanceMetrics['jaccard']
 
     def distance(self, businessA, businessB):
         sum = 0
