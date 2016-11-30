@@ -128,6 +128,9 @@ def jaccard(a, b, normalize = True):
         return 1 - 1.0 * intersection / union
     return intersection / union
 
+def jaccardNoNormalization(a, b, normalize = True):
+    return jaccard(a, b, False)
+
 '''
 Dice coefficient for set features.
 '''

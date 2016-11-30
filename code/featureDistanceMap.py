@@ -14,7 +14,7 @@ KEY_WORDS = 10
 NUM_FEATURES = 11
 
 class FeatureDistanceMap:
-    def __init__(self, mappings = None):
+    def __init__(self, mapping = None, weights = None):
         self._distanceMetrics = {
             'euclidean': lambda a, b: distance.euclidean([a], [b]),
             'manhattan': distance.manhattanScalar,
@@ -23,8 +23,8 @@ class FeatureDistanceMap:
             'jaccard': distance.jaccard
         }
 
-        self._mapping = mappings
-        if mappings == None:
+        self._mapping = mapping
+        if (self._mapping == None):
             self._mapping = [None] * NUM_FEATURES
             self._mapping[STARS] = self._distanceMetrics['manhattan']
             self._mapping[TOTAL_REVIEW_COUNT] = self._distanceMetrics['manhattan']
@@ -38,8 +38,14 @@ class FeatureDistanceMap:
             self._mapping[TOP_WORDS] = self._distanceMetrics['jaccard']
             self._mapping[KEY_WORDS] = self._distanceMetrics['jaccard']
 
+        self._weights = weights
+        if (self._weights == None):
+            self._weights = [1] * NUM_FEATURES
+
     def distance(self, businessA, businessB):
         sum = 0
         for i in range(len(self._mapping)):
-            sum += self._mapping[i](businessA.features[i], businessB.features[i])
+            if (self._weights[i] == 0):
+                continue
+            sum += self._weights[i] * self._mapping[i](businessA.features[i], businessB.features[i])
         return sum
