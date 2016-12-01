@@ -306,5 +306,6 @@ CREATE INDEX IX_ReviewSpecialWords_businessId_topWords_keyWords ON ReviewSpecial
 CREATE INDEX IX_BusinessCategories_name_businessId ON BusinessCategories (name, businessId);
 CREATE INDEX IX_ReviewWords_word_wordCount_businessId ON ReviewWords (word, wordCount, businessId);
 CREATE INDEX IX_ReviewWordsAggregate_word_wordCount_businessId ON ReviewWordsAggregate (word, wordCount, businessId);
+CREATE INDEX IX_BusinessHours_open_close_businessId ON BusinessHours (open, close, businessId);
 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ml242;

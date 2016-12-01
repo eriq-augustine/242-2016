@@ -19,6 +19,8 @@ COLUMN_NUM_WORDS = 13
 COLUMN_MEAN_WORD_COUNT = 14
 COLUMN_TOP_WORDS = 15
 COLUMN_KEY_WORDS = 16
+COLUMN_TOTAL_HOURS = 17
+COLUMN_OPEN_HOURS = 18
 
 # Takes a list of maps and converts it to a single one-hot encoding.
 # [{"key1": val1, "key2", val2}, ...]
@@ -58,14 +60,17 @@ def buildMap(businesses, column):
     count = 0
 
     for business in businesses:
-        for attribute in business[column].split(';;'):
+        for attribute in splitWithEmpty(business[column]):
             if attribute not in attributeMap:
                 attributeMap[attribute] = count
                 count += 1
 
     return attributeMap
 
-def extractFeatures(rawBusiness, attributeMap, categoryMap, topWordMap, keyWordMap):
+def splitWithEmpty(val):
+    return [x for x in val.split(';;') if x != '']
+
+def extractFeatures(rawBusiness, attributeMap, categoryMap, topWordMap, keyWordMap, openHoursMap):
     featureVector = []
     numericColumns = [
         COLUMN_STARS,
@@ -75,22 +80,26 @@ def extractFeatures(rawBusiness, attributeMap, categoryMap, topWordMap, keyWordM
         COLUMN_MEAN_WORD_LEN,
         COLUMN_NUM_WORDS,
         COLUMN_MEAN_WORD_COUNT,
+        COLUMN_TOTAL_HOURS
     ]
 
     for column in numericColumns:
         featureVector.append(rawBusiness[column])
 
-    attributes = [attributeMap[ele] for ele in rawBusiness[COLUMN_ATTRIBUTES].split(';;')]
+    attributes = [attributeMap[ele] for ele in splitWithEmpty(rawBusiness[COLUMN_ATTRIBUTES])]
     featureVector.append(attributes)
 
-    categories = [categoryMap[ele] for ele in rawBusiness[COLUMN_CATEGORIES].split(';;')]
+    categories = [categoryMap[ele] for ele in splitWithEmpty(rawBusiness[COLUMN_CATEGORIES])]
     featureVector.append(categories)
 
-    topWords = [topWordMap[ele] for ele in rawBusiness[COLUMN_TOP_WORDS].split(';;')]
+    topWords = [topWordMap[ele] for ele in splitWithEmpty(rawBusiness[COLUMN_TOP_WORDS])]
     featureVector.append(topWords)
 
-    keyWords = [keyWordMap[ele] for ele in rawBusiness[COLUMN_KEY_WORDS].split(';;')]
+    keyWords = [keyWordMap[ele] for ele in splitWithEmpty(rawBusiness[COLUMN_KEY_WORDS])]
     featureVector.append(keyWords)
+
+    openHours = [openHoursMap[ele] for ele in splitWithEmpty(rawBusiness[COLUMN_OPEN_HOURS])]
+    featureVector.append(openHours)
 
     otherInfo = {
         "yelpId": rawBusiness[COLUMN_YELP_ID],
@@ -107,8 +116,9 @@ def getBusinesses(businessType=data.DATA_TYPE_FAKE):
     categoryMap = buildMap(rawBusinesses, COLUMN_CATEGORIES)
     topWordMap = buildMap(rawBusinesses, COLUMN_TOP_WORDS)
     keyWordMap = buildMap(rawBusinesses, COLUMN_KEY_WORDS)
+    openHoursMap = buildMap(rawBusinesses, COLUMN_OPEN_HOURS)
 
-    businesses = [extractFeatures(business, attributeMap, categoryMap, topWordMap, keyWordMap) for business in rawBusinesses]
+    businesses = [extractFeatures(business, attributeMap, categoryMap, topWordMap, keyWordMap, openHoursMap) for business in rawBusinesses]
     return businesses
 
 if __name__ == '__main__':

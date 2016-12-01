@@ -29,7 +29,9 @@ QUERY_BUSINESSES = '''
         COALESCE(W.numWords, 0) AS numWords,
         COALESCE(W.numWords / R.availableReviewCount, 0) AS meanWordCount,
         COALESCE(RSP.topWords, '') AS topWords,
-        COALESCE(RSP.keyWords, '') AS keyWords
+        COALESCE(RSP.keyWords, '') AS keyWords,
+        COALESCE(T.totalHours, 0) AS totalHours,
+        COALESCE(OH.openHours, '') AS openHours
     FROM
         Businesses B
         -- To limit businesses to only the test set, uncomment this.
@@ -43,8 +45,46 @@ QUERY_BUSINESSES = '''
                 'Chinese', 'American (New)', 'Breakfast & Brunch', 'Cafes'
             )
         ) Restaurants ON Restaurants.businessId = B.id
+        LEFT JOIN (
+            SELECT
+                businessId,
+                SUM(LEAST(CASE WHEN close = 0 THEN 1440 ELSE close END - open / 60.0, 24.0)) AS totalHours
+            FROM businesshours
+            WHERE close > open
+            GROUP BY businessId
+        ) T ON T.businessId = B.id
+        LEFT JOIN (
+            SELECT
+                businessId,
+                CONCAT(breakfastCount, ';;', lunchCount, ';;', dinnerCount, ';;', lateCount) AS openHours
+            FROM (
+                SELECT
+                    businessId,
+                    CASE WHEN SUM(breakfast) >= 4 THEN 'B' ELSE '' END AS breakfastCount,
+                    CASE WHEN SUM(lunch) >= 4 THEN 'L' ELSE '' END AS lunchCount,
+                    CASE WHEN SUM(dinner) >= 4 THEN 'D' ELSE '' END AS dinnerCount,
+                    CASE WHEN SUM(late) >= 4 THEN 'La' ELSE '' END AS lateCount
+                FROM (
+                    SELECT
+                            businessId,
+                            CASE WHEN open <= 720 AND close > 360 THEN 1 ELSE 0 END AS breakfast,
+                            CASE WHEN open <= 900 AND close > 720 THEN 1 ELSE 0 END AS lunch,
+                            CASE WHEN open <= 1260 AND close > 1020 THEN 1 ELSE 0 END AS dinner,
+                            CASE WHEN open >= 1260 OR open <=120 THEN 1 ELSE 0 END AS late
+                    FROM (
+                            SELECT
+                                businessId,
+                                open,
+                                CASE WHEN close = 0 THEN 1440 ELSE close END AS close
+                            FROM businessHours
+                            WHERE close >= open
+                        ) X
+                ) Y
+            GROUP BY businessId
+            ) Z
+        ) OH ON OH.businessId = B.id
         LEFT JOIN BusinessAttributesAggregate A ON A.businessId = B.id
-        LEFT JOIN BusinessCategoriesAggregate C on C.businessId = B.id
+        LEFT JOIN BusinessCategoriesAggregate C ON C.businessId = B.id
         LEFT JOIN ReviewStats R ON R.businessId = B.id
         LEFT JOIN (
             SELECT
