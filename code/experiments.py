@@ -27,7 +27,7 @@ FEATURE_WEIGHTS = [
 KS = [10, 16, 14, 12, 18, 8]
 
 SCALAR_NORMALIZATION = [distance.logisticNormalize, distance.logNormalize, distance.noNormalize]
-SET_DISTANCE = [distance.jaccard, distance.dice, distance.jaccardNoNormalization]
+SET_DISTANCE = [distance.jaccard, distance.dice]
 
 def buildFeatureMapping(scalarNormalize, setDictance):
     mapping = [None] * featureDistanceMap.NUM_FEATURES
