@@ -1,5 +1,5 @@
 # 242-2016
-Project for the "Para-normal Distributions" group of CMPS242 Fall 2016.
+Project for the "Para-normal Distributions" team (Team #0) of CMPS242 Fall 2016.
 The group member are:
    - Eriq Augustine
    - Varun Embar
