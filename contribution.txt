@@ -1,0 +1,18 @@
+## Contributions
+Eriq Augustine
+   - Data Importing
+   - Clustering Implementation
+   - Optimizations
+
+Varun Embar
+   - Evaluation Design
+   - Evaluation Implementation
+
+Dhawal Joharapurkar
+   - Feature Extraction
+   - Feature Engineering
+
+Xioa Li
+   - Distance Metric Research
+   - Distance Metric Implementation
+   - Distance Normalization
