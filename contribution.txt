@@ -12,7 +12,7 @@ Dhawal Joharapurkar
    - Feature Extraction
    - Feature Engineering
 
-Xioa Li
+Xiao Li
    - Distance Metric Research
    - Distance Metric Implementation
    - Distance Normalization

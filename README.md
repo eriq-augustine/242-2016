@@ -4,7 +4,7 @@ The group member are:
    - Eriq Augustine
    - Varun Embar
    - Dhawal Joharapurkar
-   - Xioa Li
+   - Xiao Li
 
 The aim of this project is to experiment on finding similar businesses in the Yelp Challenge Dataset using clustering.
 
