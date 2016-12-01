@@ -316,7 +316,7 @@ The full results can be seen in Appendix \ref{appendix:full-results}.
 \section{Conclusion}
 Clustering works fairly well for this dataset.
 The signals that most strongly indicate that two businesses are the same come from the reviews rather than the more structured data like number of stars.
-Our work with the texttual features was limited to just a few instances of ``low-hanging fruit''
+Our work with the textual features was limited to just a few instances of ``low-hanging fruit''
 But if the success of those features is any indication of the richness of the reviews, then the reviews should be the focus of future work.
 
 \appendix
@@ -326,7 +326,7 @@ But if the success of those features is any indication of the richness of the re
 \label{appendix:temporal-features}
 
 Time constraints lead us to not being able to complete the experiments with \textit{Temporal} features.
-However, we do have paritial results.
+However, we do have partial results.
 
 It does not look like \textit{Temporal} features are stronger than \textit{Attribute} or \textit{Word} features.
 However, we see \textit{Temporal} features performing better than most combinations which include \textit{Numeric} features.
@@ -359,6 +359,8 @@ We already know that the \textit{Numeric} features are detrimental, but it is ve
             NAWT & 14 & Logistic & Dice & 0.765841 \\
             NAWT & 14 & Logistic & Jaccard & 0.747909 \\
             AWT & 10 & N/A & Jaccard & 0.718515 \\
+            NAT & 10 & Logistic & Jaccard & 0.742525 \\
+            NWT & 10 & Logistic & Jaccard & 0.703385 \\
             T & 10 & N/A & Jaccard & 0.779835 \\
          \hline
       \end{supertabular}
@@ -544,6 +546,10 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             AW & 14 & N/A & Jaccard & 0.842278 \\
             AW & 16 & N/A & Dice & 0.850255 \\
             AW & 16 & N/A & Jaccard & 0.844351 \\
+            AW & 18 & N/A & Dice & 0.848773 \\
+            AW & 18 & N/A & Jaccard & 0.851001 \\
+            NA & 8 & Log & Dice & 0.659055 \\
+            NA & 8 & Log & Jaccard & 0.658976 \\
             NA & 8 & Logistic & Dice & 0.742567 \\
             NA & 8 & Logistic & Jaccard & 0.770920 \\
             NA & 10 & Log & Dice & 0.670728 \\
@@ -600,9 +606,11 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             NW & 16 & Logistic & Jaccard & 0.681405 \\
             NW & 16 & None & Dice & 0.670888 \\
             NW & 16 & None & Jaccard & 0.670706 \\
+            NW & 18 & Logistic & Dice & 0.698928 \\
             NW & 18 & Logistic & Jaccard & 0.681717 \\
             A & 10 & N/A & Dice & 0.907089 \\
-            A & 10 & N/A & Jaccard & \textbf{0.969376} \\
+            \textbf{A} & \textbf{10} & \textbf{N/A} & \textbf{Jaccard} & \textbf{0.969376} \\
+            A & 12 & N/A & Dice & 0.898305 \\
             A & 12 & N/A & Jaccard & 0.910638 \\
             A & 14 & N/A & Dice & 0.869441 \\
             A & 14 & N/A & Jaccard & 0.911598 \\
@@ -610,6 +618,7 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             A & 16 & N/A & Jaccard & 0.907550 \\
             N & 8 & Log & N/A & 0.657650 \\
             N & 8 & Logistic & N/A & 0.644067 \\
+            N & 8 & None & N/A & 0.659098 \\
             N & 10 & Log & N/A & 0.657301 \\
             N & 10 & Logistic & N/A & 0.649856 \\
             N & 10 & None & N/A & 0.667856 \\
@@ -633,6 +642,9 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             W & 14 & N/A & Jaccard & 0.814819 \\
             W & 16 & N/A & Dice & 0.819333 \\
             W & 16 & N/A & Jaccard & 0.798225 \\
+            W & 18 & N/A & Dice & 0.773908 \\
+            W & 18 & N/A & Jaccard & 0.769316 \\
+
          \hline
       \end{supertabular}
 \end{center}
