@@ -5,28 +5,28 @@ import featureDistanceMap
 import features
 import metrics
 
-import argparse
 import sys
 
 # N - Numeric Features
 # A - "Attribute" features (attributes and categories)
 # W - "Word Features"
-FEATURES = ['NAW', 'NA', 'NW', 'AW', 'W', 'A', 'N']
+FEATURES = ['NAWT', 'NAT', 'NWT', 'AWT', 'WT', 'AT', 'NT', 'T']
 # Weights that accomplish the above sets.
 FEATURE_WEIGHTS = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0]
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 ]
 
 # All experimetnal parameters are order of importance.
-KS = [10, 16, 14, 12, 18, 8]
+KS = [10, 8, 12, 14, 16, 18]
 
-SCALAR_NORMALIZATION = [distance.logisticNormalize, distance.logNormalize, distance.noNormalize]
+SCALAR_NORMALIZATION = [distance.logisticNormalize, distance.logNormalize]
 SET_DISTANCE = [distance.jaccard, distance.dice]
 
 def buildFeatureMapping(scalarNormalize, setDistance):
@@ -41,10 +41,12 @@ def buildFeatureMapping(scalarNormalize, setDistance):
     mapping[featureDistanceMap.MEAN_WORD_LEN] = scalarDistance
     mapping[featureDistanceMap.NUM_WORDS] = scalarDistance
     mapping[featureDistanceMap.MEAN_WORD_COUNT] = scalarDistance
+    mapping[featureDistanceMap.TOTAL_HOURS] = scalarDistance
     mapping[featureDistanceMap.ATTRIBUTES] = setDistance
     mapping[featureDistanceMap.CATEGORIES] = setDistance
     mapping[featureDistanceMap.TOP_WORDS] = setDistance
     mapping[featureDistanceMap.KEY_WORDS] = setDistance
+    mapping[featureDistanceMap.OPEN_HOURS] = setDistance
 
     return mapping
 
@@ -65,29 +67,27 @@ def run(weights, k, scalarNorm, setDistance):
 
     return randIndex
 
-def runAll(featureSet):
-    weights = FEATURE_WEIGHTS[FEATURES.index(featureSet)]
-    print("features\tK\tscalarNorm\tsetDistance\trandIndex")
-    print("features\tK\tscalarNorm\tsetDistance\trandIndex", file=sys.stderr)
+def runAll():
+    for featureSet in FEATURES:
+        weights = FEATURE_WEIGHTS[FEATURES.index(featureSet)]
+        print("features\tK\tscalarNorm\tsetDistance\trandIndex")
+        print("features\tK\tscalarNorm\tsetDistance\trandIndex", file=sys.stderr)
 
-    for k in KS:
-        for scalarNorm in SCALAR_NORMALIZATION:
-            for setDistance in SET_DISTANCE:
-                id = "%s\t%d\t%s\t%s" % (featureSet, k, scalarNorm.__name__, setDistance.__name__)
+        for k in KS:
+            for scalarNorm in SCALAR_NORMALIZATION:
+                for setDistance in SET_DISTANCE:
+                    id = "%s\t%d\t%s\t%s" % (featureSet, k, scalarNorm.__name__, setDistance.__name__)
 
-                try:
-                    print("START: %s" % (id))
-                    randIndex = run(weights, k, scalarNorm, setDistance)
-                    print("%s\t%f" % (id, randIndex), file=sys.stderr)
-                except Exception as ex:
-                    print(ex)
-                    print("Error running: %s" % (id))
-                    print("%s, ERROR" % (id), file=sys.stderr)
+                    try:
+                        print("START: %s" % (id))
+                        randIndex = run(weights, k, scalarNorm, setDistance)
+                        print("%s\t%f" % (id, randIndex), file=sys.stderr)
+                    except Exception as ex:
+                        print(ex)
+                        print("Error running: %s" % (id))
+                        print("%s, ERROR" % (id), file=sys.stderr)
 
-                print("END: %s" % (id))
+                    print("END: %s" % (id))
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("featureSet", help = ", ".join(FEATURES))
-    args = parser.parse_args()
-    runAll(args.featureSet)
+    runAll()

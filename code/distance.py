@@ -124,9 +124,7 @@ def jaccard(a, b):
     b = set(b)
     intersection = len(a.intersection(b))
     union = len(a.union(b))
-    if (normalize):
-        return 1 - 1.0 * intersection / union
-    return intersection / union
+    return 1 - 1.0 * intersection / union
 
 '''
 Dice coefficient for set features.
