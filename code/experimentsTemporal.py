@@ -6,28 +6,32 @@ import features
 import metrics
 
 import sys
+import traceback
 
 # N - Numeric Features
 # A - "Attribute" features (attributes and categories)
 # W - "Word Features"
-FEATURES = ['NAWT', 'NAT', 'NWT', 'AWT', 'WT', 'AT', 'NT', 'T']
+FEATURES = ['AWT', 'T', 'NAWT', 'NAT', 'NWT', 'WT', 'AT', 'NT']
 # Weights that accomplish the above sets.
 FEATURE_WEIGHTS = [
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1]
 ]
 
 # All experimetnal parameters are order of importance.
+# KS = [10, 8, 12, 14, 16, 18]
 KS = [10, 8, 12, 14, 16, 18]
 
-SCALAR_NORMALIZATION = [distance.logisticNormalize, distance.logNormalize]
-SET_DISTANCE = [distance.jaccard, distance.dice]
+# SCALAR_NORMALIZATION = [distance.logisticNormalize, distance.logNormalize]
+SCALAR_NORMALIZATION = [distance.logisticNormalize]
+# SET_DISTANCE = [distance.jaccard, distance.dice]
+SET_DISTANCE = [distance.jaccard]
 
 def buildFeatureMapping(scalarNormalize, setDistance):
     mapping = [None] * featureDistanceMap.NUM_FEATURES
@@ -68,12 +72,12 @@ def run(weights, k, scalarNorm, setDistance):
     return randIndex
 
 def runAll():
-    for featureSet in FEATURES:
-        weights = FEATURE_WEIGHTS[FEATURES.index(featureSet)]
-        print("features\tK\tscalarNorm\tsetDistance\trandIndex")
-        print("features\tK\tscalarNorm\tsetDistance\trandIndex", file=sys.stderr)
+    print("features\tK\tscalarNorm\tsetDistance\trandIndex")
+    print("features\tK\tscalarNorm\tsetDistance\trandIndex", file=sys.stderr)
 
-        for k in KS:
+    for k in KS:
+        for featureSet in FEATURES:
+            weights = FEATURE_WEIGHTS[FEATURES.index(featureSet)]
             for scalarNorm in SCALAR_NORMALIZATION:
                 for setDistance in SET_DISTANCE:
                     id = "%s\t%d\t%s\t%s" % (featureSet, k, scalarNorm.__name__, setDistance.__name__)
@@ -84,6 +88,7 @@ def runAll():
                         print("%s\t%f" % (id, randIndex), file=sys.stderr)
                     except Exception as ex:
                         print(ex)
+                        traceback.print_exc()
                         print("Error running: %s" % (id))
                         print("%s, ERROR" % (id), file=sys.stderr)
 
