@@ -358,11 +358,47 @@ We already know that the \textit{Numeric} features are detrimental, but it is ve
             NAWT & 14 & Log & Jaccard & 0.708275 \\
             NAWT & 14 & Logistic & Dice & 0.765841 \\
             NAWT & 14 & Logistic & Jaccard & 0.747909 \\
+            NAWT & 16 & Logistic & Jaccard & 0.747872 \\
+            NAWT & 18 & Logistic & Jaccard & 0.741718 \\
+            AWT & 8 & N/A & Jaccard & 0.710076 \\
             AWT & 10 & N/A & Jaccard & 0.718515 \\
+            AWT & 12 & N/A & Jaccard & 0.714786 \\
+            NAT & 8 & Logistic & Jaccard & 0.728299 \\
             NAT & 10 & Logistic & Jaccard & 0.742525 \\
+            NAT & 12 & Logistic & Jaccard & 0.750258 \\
+            NAT & 14 & Logistic & Jaccard & 0.744213 \\
+            NAT & 16 & Logistic & Jaccard & 0.760592 \\
+            NAT & 18 & Logistic & Jaccard & 0.761151 \\
+            NWT & 8 & Logistic & Jaccard & 0.707539 \\
             NWT & 10 & Logistic & Jaccard & 0.703385 \\
+            NWT & 12 & Logistic & Jaccard & 0.694828 \\
+            NWT & 14 & Logistic & Jaccard & 0.696075 \\
+            NWT & 16 & Logistic & Jaccard & 0.719207 \\
+            NWT & 18 & Logistic & Jaccard & 0.717642 \\
+            AT & 8 & N/A & Jaccard & 0.726991 \\
+            AT & 10 & N/A & Jaccard & 0.734135 \\
+            AT & 12 & N/A & Jaccard & 0.735475 \\
+            AT & 14 & N/A & Jaccard & 0.729254 \\
+            AT & 16 & N/A & Jaccard & 0.755034 \\
+            AT & 18 & N/A & Jaccard & 0.774984 \\
+            NT & 8 & Logistic & Jaccard & 0.714700 \\
+            NT & 10 & Logistic & Jaccard & 0.699737 \\
+            NT & 12 & Logistic & Jaccard & 0.699579 \\
+            NT & 14 & Logistic & Jaccard & 0.701346 \\
+            NT & 16 & Logistic & Jaccard & 0.694767 \\
+            NT & 18 & Logistic & Jaccard & 0.688457 \\
+            WT & 8 & N/A & Jaccard & 0.720786 \\
+            WT & 10 & N/A & Jaccard & 0.718196 \\
+            WT & 12 & N/A & Jaccard & 0.753199 \\
+            WT & 14 & N/A & Jaccard & 0.754235 \\
+            WT & 16 & N/A & Jaccard & 0.781041 \\
+            WT & 18 & N/A & Jaccard & 0.763266 \\
+            T & 8 & N/A & Jaccard & 0.780173 \\
             T & 10 & N/A & Jaccard & 0.779835 \\
-         \hline
+            T & 12 & N/A & Jaccard & 0.760090 \\
+            T & 14 & N/A & Jaccard & 0.754714 \\
+            T & 16 & N/A & Jaccard & 0.772534 \\
+            T & 18 & N/A & Jaccard & 0.772613 \\
       \end{supertabular}
 \end{center}
 
@@ -538,6 +574,8 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             NAW & 18 & Logistic & Jaccard & 0.757685 \\
             NAW & 18 & None & Dice & 0.669489 \\
             NAW & 18 & None & Jaccard & 0.669458 \\
+            AW & 8 & N/A & Dice & 0.911582 \\
+            AW & 8 & N/A & Jaccard & 0.862100 \\
             AW & 10 & N/A & Dice & 0.929555 \\
             AW & 10 & N/A & Jaccard & 0.855210 \\
             AW & 12 & N/A & Dice & 0.870459 \\
@@ -552,6 +590,8 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             NA & 8 & Log & Jaccard & 0.658976 \\
             NA & 8 & Logistic & Dice & 0.742567 \\
             NA & 8 & Logistic & Jaccard & 0.770920 \\
+            NA & 8 & None & Dice & 0.659096 \\
+            NA & 8 & None & Jaccard & 0.659096 \\
             NA & 10 & Log & Dice & 0.670728 \\
             NA & 10 & Log & Jaccard & 0.671137 \\
             NA & 10 & Logistic & Dice & 0.726959 \\
@@ -582,6 +622,12 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             NA & 18 & Logistic & Jaccard & 0.719783 \\
             NA & 18 & None & Dice & 0.669363 \\
             NA & 18 & None & Jaccard & 0.669419 \\
+            NW & 8 & Log & Dice & 0.664388 \\
+            NW & 8 & Log & Jaccard & 0.658140 \\
+            NW & 8 & Logistic & Dice & 0.682593 \\
+            NW & 8 & Logistic & Jaccard & 0.644868 \\
+            NW & 8 & None & Dice & 0.659121 \\
+            NW & 8 & None & Jaccard & 0.659061 \\
             NW & 10 & Log & Dice & 0.669719 \\
             NW & 10 & Log & Jaccard & 0.684106 \\
             NW & 10 & Logistic & Dice & 0.694825 \\
@@ -606,8 +652,14 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             NW & 16 & Logistic & Jaccard & 0.681405 \\
             NW & 16 & None & Dice & 0.670888 \\
             NW & 16 & None & Jaccard & 0.670706 \\
+            NW & 18 & Log & Dice & 0.674613 \\
+            NW & 18 & Log & Jaccard & 0.672337 \\
             NW & 18 & Logistic & Dice & 0.698928 \\
             NW & 18 & Logistic & Jaccard & 0.681717 \\
+            NW & 18 & None & Dice & 0.668942 \\
+            NW & 18 & None & Jaccard & 0.669170 \\
+            A & 8 & N/A & Dice & 0.832591 \\
+            A & 8 & N/A & Jaccard & 0.968628 \\
             A & 10 & N/A & Dice & 0.907089 \\
             \textbf{A} & \textbf{10} & \textbf{N/A} & \textbf{Jaccard} & \textbf{0.969376} \\
             A & 12 & N/A & Dice & 0.898305 \\
@@ -616,6 +668,8 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             A & 14 & N/A & Jaccard & 0.911598 \\
             A & 16 & N/A & Dice & 0.826885 \\
             A & 16 & N/A & Jaccard & 0.907550 \\
+            A & 18 & N/A & Dice & 0.824286 \\
+            A & 18 & N/A & Jaccard & 0.888948 \\
             N & 8 & Log & N/A & 0.657650 \\
             N & 8 & Logistic & N/A & 0.644067 \\
             N & 8 & None & N/A & 0.659098 \\
@@ -634,6 +688,8 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             N & 18 & Log & N/A & 0.669534 \\
             N & 18 & Logistic & N/A & 0.661045 \\
             N & 18 & None & N/A & 0.669127 \\
+            W & 8 & N/A & Dice & 0.839680 \\
+            W & 8 & N/A & Jaccard & 0.817116 \\
             W & 10 & N/A & Dice & 0.852379 \\
             W & 10 & N/A & Jaccard & 0.816539 \\
             W & 12 & N/A & Dice & 0.860230 \\
@@ -644,8 +700,6 @@ while set distance only makes sense in the presence of non-numeric features ('A'
             W & 16 & N/A & Jaccard & 0.798225 \\
             W & 18 & N/A & Dice & 0.773908 \\
             W & 18 & N/A & Jaccard & 0.769316 \\
-
-         \hline
       \end{supertabular}
 \end{center}
 
