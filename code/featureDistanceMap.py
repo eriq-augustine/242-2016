@@ -51,5 +51,5 @@ class FeatureDistanceMap:
         for i in range(len(self._mapping)):
             if (self._weights[i] == 0):
                 continue
-            sum += self._weights[i] * self._mapping[i](businessA.features[i], businessB.features[i])
+            sum += (1.0 / self._weights[i]) * self._mapping[i](businessA.features[i], businessB.features[i])
         return sum
