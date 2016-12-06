@@ -29,8 +29,8 @@ def run(businessType):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("businessType",
-                        help = "%s, %s, %s, %s" % (data.DATA_TYPE_DATABASE, data.DATA_TYPE_FAKE, data.DATA_TYPE_FULL, data.DATA_TYPE_TEST),
+                        help = "%s, %s, %s, %s, %s" % (data.DATA_SOURCE_DATABASE, data.DATA_SOURCE_GROUNDTRUTH_ALL, data.DATA_SOURCE_GROUNDTRUTH_100, data.DATA_SOURCE_GROUNDTRUTH_200, data.DATA_SOURCE_RESTAURANTS),
                         nargs = '?',
-                        default = data.DATA_TYPE_FAKE)
+                        default = data.DATA_SOURCE_GROUNDTRUTH_200)
     args = parser.parse_args()
     run(args.businessType)

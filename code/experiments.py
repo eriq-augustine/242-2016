@@ -49,7 +49,7 @@ def buildFeatureMapping(scalarNormalize, setDistance):
     return mapping
 
 def run(weights, k, scalarNorm, setDistance):
-    businesses = features.getBusinesses(data.DATA_TYPE_TEST)
+    businesses = features.getBusinesses(data.DATA_SOURCE_GROUNDTRUTH_ALL)
 
     featureDistMap = featureDistanceMap.FeatureDistanceMap(buildFeatureMapping(scalarNorm, setDistance), weights)
     kMeans = clustering.KMeans(k, featureDistMap)
