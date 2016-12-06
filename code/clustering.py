@@ -70,8 +70,13 @@ class KMeans:
         iterations = 0
         stop = False
         for i in range(self._maxSteps):
-            newClusters = [[] for x in centroids]
+            # Pre-load the clusters with the centroids.
+            newClusters = [[centroid] for centroid in centroids]
+
             for pointIndex in range(self._numPoints):
+                if (pointIndex in centroids):
+                    continue
+
                 # Assign to the closest centroid
                 newClusters[self.closestPointIndex(centroids, pointIndex)].append(pointIndex)
 

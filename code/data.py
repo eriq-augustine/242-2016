@@ -2,9 +2,9 @@ import pickle
 
 # If you use the db, then you will need a file (secrets.py) that defines: DB_HOST, DB_PORT, DB_USER, and DB_PASS
 
-FAKE_BUSINESSES_FILE = 'fakeBusinesses.pickle'
-REAL_BUSINESSES_FILE = 'fullBusinesses.pickle'
-TEST_BUSINESSES_FILE = 'testBusinesses.pickle'
+FAKE_BUSINESSES_FILE = 'data/fakeBusinesses.pickle'
+REAL_BUSINESSES_FILE = 'data/fullBusinesses.pickle'
+TEST_BUSINESSES_FILE = 'data/testBusinesses.pickle'
 
 DATA_TYPE_DATABASE = 'database'
 DATA_TYPE_FAKE = 'fake'
