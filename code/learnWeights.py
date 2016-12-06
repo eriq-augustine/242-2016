@@ -5,11 +5,19 @@ import featureDistanceMap
 import features
 import metrics
 
+import random
 import sys
 
-START_WEIGHT = 0.0
-WEIGHT_INCREMENT = 1.0
-END_WEIGHT = 2.0
+# We will hold weights constant and modify one at a time.
+# Then we will make up to MAX_ITERATIONS passes or until the weights remain unchanged.
+# The order we probe the weights will be random every iteration to prevent bias.
+
+MAX_ITERATIONS = 30
+
+START_WEIGHT = 1.0
+MIN_WEIGHT = 0.0
+WEIGHT_INCREMENT = 0.5
+MAX_WEIGHT = 2.0
 
 DATA = data.DATA_TYPE_FAKE
 
@@ -40,14 +48,14 @@ def getFeatureMapping():
 
     return mapping
 
-def run(weights, k, featureFunctionMapping, businesses, goldLabel):
+def runClustering(weights, k, featureFunctionMapping, businesses, goldLabel):
     featureDistMap = featureDistanceMap.FeatureDistanceMap(featureFunctionMapping, weights)
     kMeans = clustering.KMeans(k, featureDistMap)
 
     id = "\t".join([str(weight) for weight in weights])
+    randIndex = -1
 
     try:
-        print("START: %s" % (id))
         clusters = kMeans.cluster(businesses)
         b_cluster = metrics.getClusterBusinessID(businesses, clusters)
         randIndex = metrics.randIndex(b_cluster, goldLabel)
@@ -60,44 +68,63 @@ def run(weights, k, featureFunctionMapping, businesses, goldLabel):
         '''
     except Exception as ex:
         print(ex)
-        print("Error running: %s" % (id))
         print("%s\tERROR" % (id), file=sys.stderr)
 
-    print("END: %s" % (id))
+    return randIndex
 
 
-# Recrsvley modify weights for all combinations.
+# Recrsvley modify weights.
 # Each call is responsible for a single weight.
-def runWeight(weights, weightIndex, k, featureFunctionMapping, businesses, goldLabel):
-    if (weightIndex == len(weights)):
-        # We collected all the weights.
-        run(weights, k, featureFunctionMapping, businesses, goldLabel)
-        return
+# |weightsOrder| is a list of indexes representing the order that we will probe the weights in.
+# |orderIndex| is the index into that list.
+# So, the weight that each call will probe is: weights[weightsOrder[orderIndex]].
+# The best randIndex of this probe will be returned.
+def probeWeight(weights, weightsOrder, orderIndex, k, featureFunctionMapping, businesses, goldLabel):
+    # First allow the next weight to probe.
+    if (orderIndex < len(weightsOrder) - 1):
+        probeWeight(weights, weightsOrder, orderIndex + 1, k, featureFunctionMapping, businesses, goldLabel)
 
-    assert(weights[weightIndex] == START_WEIGHT)
+    weight = MIN_WEIGHT
+    weightIndex = weightsOrder[orderIndex]
 
-    weight = START_WEIGHT
-    while (weight <= END_WEIGHT):
+    maxWeight = -1
+    maxRandIndex = -1
+
+    while (weight <= MAX_WEIGHT):
         weights[weightIndex] = weight
-        runWeight(weights, weightIndex + 1, k, featureFunctionMapping, businesses, goldLabel)
+        randIndex = runClustering(weights, k, featureFunctionMapping, businesses, goldLabel)
+
+        if (maxWeight == -1 or randIndex > maxRandIndex):
+            maxWeight = weight
+            maxRandIndex = randIndex
+
         weight += WEIGHT_INCREMENT
 
-    # Cleanup
-    # This is not actually necessary, but will provide a good spot check.
-    weights[weightIndex] = START_WEIGHT
+    weights[weightIndex] = maxWeight
+    return maxRandIndex
 
 def main():
     businesses = features.getBusinesses(DATA)
     goldLabel = metrics.readGoldLabel("../data/groundtruth")
 
-    initialWeights = [START_WEIGHT] * featureDistanceMap.NUM_FEATURES
+    weights = [START_WEIGHT] * featureDistanceMap.NUM_FEATURES
     featureFunctionMapping = getFeatureMapping()
 
-    print("features\tK\tscalarNorm\tsetDistance\trandIndex")
-    print("features\tK\tscalarNorm\tsetDistance\trandIndex", file=sys.stderr)
+    oldWeights = list(weights)
+    for iteration in range(MAX_ITERATIONS):
+        weightsOrder = list(range(len(weights)))
+        random.shuffle(weightsOrder)
 
-    runWeight(initialWeights, 0, K, featureFunctionMapping, businesses, goldLabel)
+        randIndex = probeWeight(weights, weightsOrder, 0, K, featureFunctionMapping, businesses, goldLabel)
 
+        if (oldWeights == weights):
+            break
+
+        oldWeights = list(weights)
+
+    id = "\t".join([str(weight) for weight in weights])
+    print("Converged in %d / %d iterations" % (iteration + 1, MAX_ITERATIONS))
+    print("Final Weights: %s\t%f" % (id, randIndex), file=sys.stderr)
 
 if __name__ == '__main__':
     main()
