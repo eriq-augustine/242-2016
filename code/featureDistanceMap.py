@@ -46,7 +46,7 @@ class FeatureDistanceMap:
 
         self._weights = weights
         if (self._weights == None):
-            self._weights = DEFAULT_WEIGHTS
+            self._weights = [1] * NUM_FEATURES
 
     def distance(self, businessA, businessB):
         sum = 0
