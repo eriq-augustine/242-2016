@@ -15,6 +15,8 @@ KEY_WORDS = 11
 OPEN_HOURS = 12
 NUM_FEATURES = 13
 
+DEFAULT_WEIGHTS = [1.0, 0.0, 2.0, 0.0, 0.5, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0, 1.5, 0.0]
+
 class FeatureDistanceMap:
     def __init__(self, mapping = None, weights = None):
         self._distanceMetrics = {
@@ -44,7 +46,7 @@ class FeatureDistanceMap:
 
         self._weights = weights
         if (self._weights == None):
-            self._weights = [1] * NUM_FEATURES
+            self._weights = DEFAULT_WEIGHTS
 
     def distance(self, businessA, businessB):
         sum = 0
