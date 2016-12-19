@@ -2,14 +2,16 @@ import pickle
 
 # If you use the db, then you will need a file (secrets.py) that defines: DB_HOST, DB_PORT, DB_USER, and DB_PASS
 
-FAKE_BUSINESSES_FILE = 'fakeBusinesses.pickle'
-REAL_BUSINESSES_FILE = 'fullBusinesses.pickle'
-TEST_BUSINESSES_FILE = 'testBusinesses.pickle'
+GROUND_TRUTH_200_FILE = 'data/groundTruth_200.pickle'
+GROUND_TRUTH_100_FILE = 'data/groundTruth_100.pickle'
+RESTAURANTS_FILE = 'data/restaurants.pickle'
+GROUND_TRUTH_ALL_FILE = 'data/groundTruth_all.pickle'
 
-DATA_TYPE_DATABASE = 'database'
-DATA_TYPE_FAKE = 'fake'
-DATA_TYPE_FULL = 'full'
-DATA_TYPE_TEST = 'test'
+DATA_SOURCE_DATABASE = 'database'
+DATA_SOURCE_GROUNDTRUTH_100 = 'groundtruth100'
+DATA_SOURCE_GROUNDTRUTH_200 = 'groundtruth200'
+DATA_SOURCE_RESTAURANTS = 'restaurants'
+DATA_SOURCE_GROUNDTRUTH_ALL = 'groundtruth'
 
 QUERY_BUSINESSES = '''
     SELECT
@@ -36,6 +38,10 @@ QUERY_BUSINESSES = '''
         Businesses B
         -- To limit businesses to only the test set, uncomment this.
         -- JOIN GroundTruth GT ON GT.businessId = B.id
+        -- To use a random (but seeded) subset of the ground truth (size: 200ish), uncomment this.
+        -- JOIN GroundTruth GT
+        --     TABLESAMPLE BERNOULLI(200.0 / (SELECT COUNT(*) FROM GroundTruth) * 100) REPEATABLE(4)
+        --     ON GT.businessId = B.id
         JOIN (
             SELECT DISTINCT businessId
             FROM BusinessCategories BC
@@ -121,38 +127,33 @@ def getBusinessesDB():
     return businesses
 
 def getBusinesses(businessType):
-    if (businessType == DATA_TYPE_DATABASE):
+    if (businessType == DATA_SOURCE_DATABASE):
         return getBusinessesDB()
-    elif (businessType == DATA_TYPE_FAKE):
-        return getFakeBusinesses()
-    elif (businessType == DATA_TYPE_FULL):
-        return getFullBusinesses()
-    elif (businessType == DATA_TYPE_TEST):
-        return getTestBusinesses()
+    elif (businessType == DATA_SOURCE_GROUNDTRUTH_100):
+        return loadPickle(GROUND_TRUTH_100_FILE)
+    elif (businessType == DATA_SOURCE_GROUNDTRUTH_200):
+        return loadPickle(GROUND_TRUTH_200_FILE)
+    elif (businessType == DATA_SOURCE_GROUNDTRUTH_ALL):
+        return loadPickle(GROUND_TRUTH_ALL_FILE,)
+    elif (businessType == DATA_SOURCE_RESTAURANTS):
+        return loadPickle(RESTAURANTS_FILE)
     else:
         raise Exception("Unknown business type: %s" % (businessType))
 
 # Just a quick way to get some data to work with without hitting the DB.
-def getFakeBusinesses():
-    return pickle.load(open(FAKE_BUSINESSES_FILE, 'rb'))
-
-# Get the  businesses in our golden set from the pickle.
-def getTestBusinesses():
-    return pickle.load(open(TEST_BUSINESSES_FILE, 'rb'))
-
-# Get the real businesses from the pickle.
-def getFullBusinesses():
-    return pickle.load(open(REAL_BUSINESSES_FILE, 'rb'))
+def loadPickle(pickleFile):
+    return pickle.load(open(pickleFile, 'rb'))
 
 if __name__ == '__main__':
     businesses = getBusinessesDB()
     print(len(businesses))
     for business in businesses[:10]:
         print(business)
-    # pickle.dump(businesses[:100], open(FAKE_BUSINESSES_FILE, 'wb'))
+    # pickle.dump(businesses[:100], open(GROUND_TRUTH_100_FILE, 'wb'))
+    # pickle.dump(businesses[:200], open(GROUND_TRUTH_200_FILE, 'wb'))
 
     # Be very careful about which one you are using.
     # Look at the query, if your are using the GroundTruth table, then you should be using
     # the test pickle.
-    # pickle.dump(businesses, open(REAL_BUSINESSES_FILE, 'wb'))
-    # pickle.dump(businesses, open(TEST_BUSINESSES_FILE, 'wb'))
+    # pickle.dump(businesses, open(RESTAURANTS_FILE, 'wb'))
+    # pickle.dump(businesses, open(GROUND_TRUTH_ALL_FILE, 'wb'))

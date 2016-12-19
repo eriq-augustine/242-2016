@@ -70,8 +70,13 @@ class KMeans:
         iterations = 0
         stop = False
         for i in range(self._maxSteps):
-            newClusters = [[] for x in centroids]
+            # Pre-load the clusters with the centroids.
+            newClusters = [[centroid] for centroid in centroids]
+
             for pointIndex in range(self._numPoints):
+                if (pointIndex in centroids):
+                    continue
+
                 # Assign to the closest centroid
                 newClusters[self.closestPointIndex(centroids, pointIndex)].append(pointIndex)
 
@@ -127,7 +132,7 @@ class KMeans:
 
     # Given all the points, find the point that has the minimum distance to all the other points.
     def getPairwiseCentroid(self, pointIndices):
-        index = -1
+        index = 0
         minDistance = -1
         for i in range(len(pointIndices)):
             totalDistance = 0
@@ -135,7 +140,7 @@ class KMeans:
                 if (i != j):
                     totalDistance += self._distances.get(pointIndices[i], pointIndices[j])
 
-            if (index == -1 or totalDistance < minDistance):
+            if (minDistance == -1 or totalDistance < minDistance):
                 index = i
                 minDistance = totalDistance
 

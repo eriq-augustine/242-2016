@@ -108,7 +108,7 @@ def extractFeatures(rawBusiness, attributeMap, categoryMap, topWordMap, keyWordM
 
     return business.Business(rawBusiness[COLUMN_ID], featureVector, otherInfo)
 
-def getBusinesses(businessType=data.DATA_TYPE_FAKE):
+def getBusinesses(businessType=data.DATA_SOURCE_GROUNDTRUTH_200):
     features = []
     rawBusinesses = data.getBusinesses(businessType)
 
