@@ -16,7 +16,7 @@ MAX_ITERATIONS = 30
 
 START_WEIGHT = 1.0
 MIN_WEIGHT = 0.0
-WEIGHT_INCREMENT = 0.5
+WEIGHT_INCREMENT = 0.50
 MAX_WEIGHT = 2.0
 
 DATA = data.DATA_SOURCE_GROUNDTRUTH_200
@@ -48,7 +48,14 @@ def getFeatureMapping():
 
     return mapping
 
-def runClustering(weights, k, featureFunctionMapping, businesses, goldLabel):
+def paramId(weights, k):
+    return str((k, weights))
+
+def runClustering(weights, k, featureFunctionMapping, businesses, goldLabel, cache):
+    cacheId = paramId(weights, k)
+    if (cacheId in cache):
+        return cache[cacheId]
+
     featureDistMap = featureDistanceMap.FeatureDistanceMap(featureFunctionMapping, weights)
     kMeans = clustering.KMeans(k, featureDistMap)
 
@@ -70,6 +77,8 @@ def runClustering(weights, k, featureFunctionMapping, businesses, goldLabel):
         print(ex)
         print("%s\tERROR" % (id), file=sys.stderr)
 
+    cache[cacheId] = randIndex
+
     return randIndex
 
 
@@ -79,10 +88,10 @@ def runClustering(weights, k, featureFunctionMapping, businesses, goldLabel):
 # |orderIndex| is the index into that list.
 # So, the weight that each call will probe is: weights[weightsOrder[orderIndex]].
 # The best randIndex of this probe will be returned.
-def probeWeight(weights, weightsOrder, orderIndex, k, featureFunctionMapping, businesses, goldLabel):
+def probeWeight(weights, weightsOrder, orderIndex, k, featureFunctionMapping, businesses, goldLabel, cache):
     # First allow the next weight to probe.
     if (orderIndex < len(weightsOrder) - 1):
-        probeWeight(weights, weightsOrder, orderIndex + 1, k, featureFunctionMapping, businesses, goldLabel)
+        probeWeight(weights, weightsOrder, orderIndex + 1, k, featureFunctionMapping, businesses, goldLabel, cache)
 
     weight = MIN_WEIGHT
     weightIndex = weightsOrder[orderIndex]
@@ -92,7 +101,7 @@ def probeWeight(weights, weightsOrder, orderIndex, k, featureFunctionMapping, bu
 
     while (weight <= MAX_WEIGHT):
         weights[weightIndex] = weight
-        randIndex = runClustering(weights, k, featureFunctionMapping, businesses, goldLabel)
+        randIndex = runClustering(weights, k, featureFunctionMapping, businesses, goldLabel, cache)
 
         if (maxWeight == -1 or randIndex > maxRandIndex):
             maxWeight = weight
@@ -110,12 +119,14 @@ def main():
     weights = [START_WEIGHT] * featureDistanceMap.NUM_FEATURES
     featureFunctionMapping = getFeatureMapping()
 
+    cache = {}
+
     oldWeights = list(weights)
     for iteration in range(MAX_ITERATIONS):
         weightsOrder = list(range(len(weights)))
         random.shuffle(weightsOrder)
 
-        randIndex = probeWeight(weights, weightsOrder, 0, K, featureFunctionMapping, businesses, goldLabel)
+        randIndex = probeWeight(weights, weightsOrder, 0, K, featureFunctionMapping, businesses, goldLabel, cache)
 
         if (oldWeights == weights):
             break
