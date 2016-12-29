@@ -20,11 +20,13 @@ def run(businessType):
         print("Cluster: %02d, Size: %02d" % (i, len(clusters[i])))
         print("         %s" % (", ".join([str(x) for x in sorted([businesses[index].otherInfo['name'] for index in clusters[i]])])))
 
-    #Metrics
+    # Metrics
     goldLabel = metrics.readGoldLabel("../data/groundtruth")
     b_cluster = metrics.getClusterBusinessID(businesses, clusters)
-    randIndex = metrics.randIndex(b_cluster, goldLabel)
-    print("rand index:"  + str(randIndex))
+    randIndex = metrics.oldRandIndex(b_cluster, goldLabel)
+    print("Old Rand Index: "  + str(randIndex))
+
+    print("New Rand Index: %f" % (metrics.randIndex(clusters, businesses)))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

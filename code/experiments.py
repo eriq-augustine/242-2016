@@ -61,7 +61,7 @@ def run(weights, k, scalarNorm, setDistance):
 
     goldLabel = metrics.readGoldLabel("../data/groundtruth")
     b_cluster = metrics.getClusterBusinessID(businesses, clusters)
-    randIndex = metrics.randIndex(b_cluster, goldLabel)
+    randIndex = metrics.oldRandIndex(b_cluster, goldLabel)
 
     return randIndex
 

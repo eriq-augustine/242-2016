@@ -51,7 +51,7 @@ def getFeatureMapping():
 def paramId(weights, k):
     return str((k, weights))
 
-def runClustering(weights, k, featureFunctionMapping, businesses, goldLabel, cache):
+def runClustering(weights, k, featureFunctionMapping, businesses, truthPairs, truthIds, cache):
     cacheId = paramId(weights, k)
     if (cacheId in cache):
         return cache[cacheId]
@@ -64,8 +64,7 @@ def runClustering(weights, k, featureFunctionMapping, businesses, goldLabel, cac
 
     try:
         clusters = kMeans.cluster(businesses)
-        b_cluster = metrics.getClusterBusinessID(businesses, clusters)
-        randIndex = metrics.randIndex(b_cluster, goldLabel)
+        randIndex = metrics.randIndex(clusters, businesses, truthPairs, truthIds)
         print("%s\t%f" % (id, randIndex), file=sys.stderr)
 
         '''
@@ -88,10 +87,10 @@ def runClustering(weights, k, featureFunctionMapping, businesses, goldLabel, cac
 # |orderIndex| is the index into that list.
 # So, the weight that each call will probe is: weights[weightsOrder[orderIndex]].
 # The best randIndex of this probe will be returned.
-def probeWeight(weights, weightsOrder, orderIndex, k, featureFunctionMapping, businesses, goldLabel, cache):
+def probeWeight(weights, weightsOrder, orderIndex, k, featureFunctionMapping, businesses, truthPairs, truthIds, cache):
     # First allow the next weight to probe.
     if (orderIndex < len(weightsOrder) - 1):
-        probeWeight(weights, weightsOrder, orderIndex + 1, k, featureFunctionMapping, businesses, goldLabel, cache)
+        probeWeight(weights, weightsOrder, orderIndex + 1, k, featureFunctionMapping, businesses, truthPairs, truthIds, cache)
 
     weight = MIN_WEIGHT
     weightIndex = weightsOrder[orderIndex]
@@ -101,7 +100,7 @@ def probeWeight(weights, weightsOrder, orderIndex, k, featureFunctionMapping, bu
 
     while (weight <= MAX_WEIGHT):
         weights[weightIndex] = weight
-        randIndex = runClustering(weights, k, featureFunctionMapping, businesses, goldLabel, cache)
+        randIndex = runClustering(weights, k, featureFunctionMapping, businesses, truthPairs, truthIds, cache)
 
         if (maxWeight == -1 or randIndex > maxRandIndex):
             maxWeight = weight
@@ -114,9 +113,10 @@ def probeWeight(weights, weightsOrder, orderIndex, k, featureFunctionMapping, bu
 
 def main():
     businesses = features.getBusinesses(DATA)
-    goldLabel = metrics.readGoldLabel("../data/groundtruth")
+    truthPairs, truthIds = metrics.getGoldTruthPairs()
 
     weights = [START_WEIGHT] * featureDistanceMap.NUM_FEATURES
+    # weights = featureDistanceMap.DEFAULT_WEIGHTS
     featureFunctionMapping = getFeatureMapping()
 
     cache = {}
@@ -126,7 +126,7 @@ def main():
         weightsOrder = list(range(len(weights)))
         random.shuffle(weightsOrder)
 
-        randIndex = probeWeight(weights, weightsOrder, 0, K, featureFunctionMapping, businesses, goldLabel, cache)
+        randIndex = probeWeight(weights, weightsOrder, 0, K, featureFunctionMapping, businesses, truthPairs, truthIds, cache)
 
         if (oldWeights == weights):
             break
