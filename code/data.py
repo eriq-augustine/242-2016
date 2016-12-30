@@ -55,7 +55,7 @@ QUERY_BUSINESSES = '''
             SELECT
                 businessId,
                 SUM(LEAST(CASE WHEN close = 0 THEN 1440 ELSE close END - open / 60.0, 24.0)) AS totalHours
-            FROM businesshours
+            FROM BusinessHours
             WHERE close > open
             GROUP BY businessId
         ) T ON T.businessId = B.id
@@ -82,7 +82,7 @@ QUERY_BUSINESSES = '''
                                 businessId,
                                 open,
                                 CASE WHEN close = 0 THEN 1440 ELSE close END AS close
-                            FROM businessHours
+                            FROM BusinessHours
                             WHERE close >= open
                         ) X
                 ) Y
