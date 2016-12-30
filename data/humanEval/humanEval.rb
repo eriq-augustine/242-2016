@@ -164,7 +164,7 @@ def fetchBusiness(id)
 				FROM BusinessHours
 				GROUP BY businessId
 			) BH ON BH.businessId = B.id
-		WHERE B.id = #{id}
+		WHERE B.yelpId = #{id}
 	"
 
 	result = $conn.exec(query)

@@ -1,9 +1,9 @@
 -- Ground Truth, one from each city.
 
-SELECT id
+SELECT yelpId
 FROM (
    SELECT
-      B.id,
+      B.yelpId,
       ROW_NUMBER() OVER (PARTITION BY G.label, B.city ORDER BY B.reviewCount DESC) AS rank
    FROM
       Businesses B
@@ -15,9 +15,9 @@ WHERE X.rank = 1
 UNION
 
 -- 68 Non-Ground Randoms (34 from each city)
-SELECT id
+SELECT yelpId
 FROM (
-   SELECT B.id
+   SELECT B.yelpId
    FROM
       Businesses B
       JOIN (
@@ -39,9 +39,9 @@ FROM (
 
 UNION
 
-SELECT id
+SELECT yelpId
 FROM (
-   SELECT B.id
+   SELECT B.yelpId
    FROM
       Businesses B
       JOIN (
