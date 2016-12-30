@@ -1,12 +1,15 @@
 import os
 import random
 
-# Computing the randIndex for a given clustering
-# assignment = dict(businessid) = clusterlabel
-# goldLabel = list of lists of same cluster buisnesses
+# Compute the randIndex for a given clustering
 # https://en.wikipedia.org/wiki/Rand_index (for more info on rand index)\
 
-DATA_DIR = os.path.join('..', 'data', 'groundtruth')
+DATA_DIR = os.path.join('..', 'data')
+GROUNDTRUTH_DIR = os.path.join(DATA_DIR, 'groundtruth')
+HUMANTRUTH_DIR = os.path.join(DATA_DIR, 'humanEval')
+
+HUMAN_PAIRS_FILE = os.path.join(HUMANTRUTH_DIR, 'pairs.txt')
+
 RESTAURANT_FILES = ['burgerking.id', 'chipotle.id', 'dairyqueen.id', 'dominospizza.id', 'dunkindonut.id', 'jackinthebox.id', 'kfc.id', 'mcdonalds.id', 'pandaexpress.id', 'papajohnspizza.id', 'pizzahut.id', 'starbucks.id', 'subway.id', 'subway.id', 'wendys.id']
 FINEDINING_FILE = 'finedining.id'
 
@@ -91,13 +94,13 @@ def getGoldTruthPairs():
     pairs = {}
 
     fineDiningIds = None
-    with open(os.path.join(DATA_DIR, FINEDINING_FILE)) as inFile:
+    with open(os.path.join(GROUNDTRUTH_DIR, FINEDINING_FILE)) as inFile:
         fineDiningIds = inFile.read().splitlines()
         truthIds.extend(fineDiningIds)
 
     for retaurantFilename in RESTAURANT_FILES:
         ids = None
-        with open(os.path.join(DATA_DIR, retaurantFilename)) as inFile:
+        with open(os.path.join(GROUNDTRUTH_DIR, retaurantFilename)) as inFile:
             ids = inFile.read().splitlines()
             truthIds.extend(ids)
 
@@ -125,8 +128,44 @@ def getGoldTruthPairs():
 
     return pairs, set(truthIds)
 
+def getHumanTruthPairs():
+    truthIds = []
+    pairs = {}
+
+    with open(HUMAN_PAIRS_FILE) as inFile:
+        inPairs = inFile.read().splitlines()
+        for inPair in inPairs:
+            parts = inPair.split(',')
+            minId = min(parts[0], parts[1])
+            maxId = max(parts[0], parts[1])
+
+            # Truth values come in the range of [1, 5].
+            # Leave out 3, <3 = false, >3 = true.
+            similarityValue = int(parts[2])
+            similar = None
+
+            if (similarityValue < 3):
+                similar = False
+            elif (similarityValue > 3):
+                similar = True
+            else:
+                continue
+
+            truthIds.append(minId)
+            truthIds.append(maxId)
+
+            if (minId not in pairs):
+                pairs[minId] = {}
+
+            pairs[minId][maxId] = similarityValue
+
+    return pairs, set(truthIds)
+
 # Past here is our old rand index code.
 # It has a bug, but is currently left in for analysis and consistency.
+
+# assignment = dict(businessid) = clusterlabel
+# goldLabel = list of lists of same cluster buisnesses
 
 def getRestaurantFiles():
     return ['burgerking.id', 'chipotle.id', 'dairyqueen.id', 'dominospizza.id', 'dunkindonut.id', 'jackinthebox.id', 'kfc.id', 'mcdonalds.id', 'pandaexpress.id', 'papajohnspizza.id', 'pizzahut.id', 'starbucks.id', 'subway.id', 'subway.id', 'wendys.id', 'finedining.id']

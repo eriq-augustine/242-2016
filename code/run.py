@@ -31,7 +31,14 @@ def run(businessType):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("businessType",
-                        help = "%s, %s, %s, %s, %s" % (data.DATA_SOURCE_DATABASE, data.DATA_SOURCE_GROUNDTRUTH_ALL, data.DATA_SOURCE_GROUNDTRUTH_100, data.DATA_SOURCE_GROUNDTRUTH_200, data.DATA_SOURCE_RESTAURANTS),
+                        help = "%s, %s, %s, %s, %s, %s" % (
+                            data.DATA_SOURCE_DATABASE,
+                            data.DATA_SOURCE_GROUNDTRUTH_ALL,
+                            data.DATA_SOURCE_GROUNDTRUTH_100,
+                            data.DATA_SOURCE_GROUNDTRUTH_200,
+                            data.DATA_SOURCE_RESTAURANTS,
+                            data.DATA_SOURCE_HUMAN_EVAL
+                        ),
                         nargs = '?',
                         default = data.DATA_SOURCE_GROUNDTRUTH_200)
     args = parser.parse_args()
