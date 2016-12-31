@@ -62,12 +62,12 @@
    Using this information the business owners can not only find potential competitors, but also get an idea of how well their business will be received in the new locality.
 
    We say that a ``competitor'' is any similar business, with the idea that a similar business caters to a similar clientele and is therefore a competitors.
-   Therefore our task involves finding similar businesses in other regions.
+   Therefore our key task becomes finding similar businesses in other regions.
    We do this by first clustering similar businesses.
    Once we have the clusters, to find similar businesses in a location, we look into the cluster to which a given restaurant belongs to, and then display restaurants in that cluster that are close to the location.  
 
    We use the k-medoids algorithm to cluster the businesses as not all attributes are numeric in nature and we need a richer set of dissimilarity scores.
-   We run experiments with various parameter settings, dissimilarity scores, and features and report the Rand index on a ``gold standard'' data set as well as a human evaluated data set.
+   We run experiments with various parameter settings, distance scores, and features and report the Rand index on a ``gold standard'' data set as well as a human evaluated data set.
    Both experiments report a high degree of success.
 
 \section{Algorithm Formulation}
@@ -78,7 +78,7 @@
       The medoid is a data point in data set that best represent the cluster center.
       The medoid is analogous to the centroid in the K-Means algorithm.
 
-      The K-Medoids algorithm has the following advantage over K-Means.
+      The K-Medoids algorithm has the following advantage over K-Means:
       \begin{itemize} 
          \setlength\itemsep{0.1cm}
          \item
@@ -91,7 +91,7 @@
             Since our medoid is a real data point (as opposed to a centroid), we can use this data point as a ``representative'' when visualizing our data (or perhaps even sampling it).
       \end{itemize}
 
-      Our stopping condition is either when we have run through 10 iterations of clustering (experimentally found to be sufficient with this dataset),
+      Our stopping condition is either when we have run through 10 iterations of clustering (experimentally found to be sufficient with this data),
       or when the current set of clusters is the same as either the last run or the run before it.
       We compare not just the most recent run so that we can prevent unnecessary runs when the clusters are \textit{jittering},
       or when outlier points are constantly shifting their membership back and forth between two or more clusters.
@@ -102,7 +102,7 @@
       For set-based, we implemented Jaccard and Dice.
 
       Once the distance for each feature is calculated, they are summed together to make our total distance.
-      To make combining the distance of different features together more reasonable, we also attempt to normalize the output of the distance to ideally be in the range 0 to 1.
+      To make combining the distance of different features together more reasonable, we also attempt to normalize the output of the distance to be in the range 0 to 1.
 
       \subsection{L1 (Manhattan) Distance}
          The Manhattan distance of two numbers x and y is calculated by:
@@ -122,7 +122,7 @@
 
    \subsection{Normalizations}
       Because different distance metrics work with different output ranges, we need to normalize the distances metrics to something consistent.
-      For example, the range of Jaccard Distance is between 0 and 1 while the range of Manhattan Distance is 0 to infinity.
+      For example, the range of Jaccard distance is between 0 and 1 while the range of Manhattan distance is 0 to infinity.
 
       To figure out what works best, we will try three different normalization methods:
       \begin{enumerate}
@@ -233,7 +233,7 @@
    \subsection{Chains}
       To generate a large set of approximate clusters, we utilized the fact that franchises in a restaurant chain should all be very similar and hence in the same cluster.
 
-      We looked at various restaurant chains such as ``McDonald's'', ``Starbucks'' etc. that are present in the data and assign all the stores belonging to the same chain as a new cluster.
+      We looked at various restaurant chains such as ``McDonald's'' and ``Starbucks'' that are present in the data and assign all the stores belonging to the same chain as a new cluster.
       (Note that we have disallowed using the name of the restaurant as a feature.)
       We extracted the top 15 restaurant chains, listed in Table \ref{tab:chains}.
       We only generate pairs within a restaurant chain.
@@ -294,12 +294,12 @@
       \item $W$ - the weights applied to each feature
    \end{enumerate}
 
-   The possible features are any non-empty combination of the following subsets:
+   The possible features is any non-empty combination of the following subsets:
    \begin{itemize}
-      \item $N$ (\textit{Numeric} features)
-      \item $A$ (\textit{Attribute} descriptive features (attributes and categories))
-      \item $W$ (\textit{Word} descriptive features (key words and top words))
-      \item $T$ (\textit{Temporal} descriptive features (open hours and total hours))
+      \item $N$ - \textit{Numeric} features
+      \item $A$ - \textit{Attribute} descriptive features (attributes and categories)
+      \item $W$ - \textit{Word} descriptive features (key words and top words)
+      \item $T$ - \textit{Temporal} descriptive features (open hours and total hours)
    \end{itemize}
 
    \subsection{Chains Data Set}
@@ -388,7 +388,7 @@
             \end{center}
          \end{table}
 
-         We observe that the best results when using \textit{10} clusters.
+         We observe the best results when using \textit{10} clusters.
          We also observe that as we increase the number of clusters from 10, the Rand index decreases.
          This could be due to the good clusters being split into many clusters resulting in decreasing Rand index.
          Another reason could be that the number of ``same clusters'' pairs in the gold standard dataset is much higher than the number of ``across cluster'' pairs.
@@ -405,13 +405,12 @@
       The order the weights were probed was randomized.
       After all the weights have been probed, the process is repeated until either 30 iterations have been completed or there is no change from the previous iteration.
 
-      To significantly speed up weight learning, we only used a random subset of 200 restaurants from the \textbf{Chains} data set.
-
       The final weights can be seen in Table \ref{tab:weight-learning}.
       In general, we see the numeric features getting zeroed out which is consistent with our experiments on the full \textbf{Chains} data set.
       A surprising weight is that attached to the ``Category Features''.
-      While the ``Attribute Features'' gets the highest weight of 3.5, the ``Category Features'' almost gets zeroed out at 0.5.
-      The Rand index achieved with this subset of the \textbf{Chains} data set was 0.919748.
+      While the ``Attribute Features'' gets a high weight of 2.5, the ``Category Features'' almost gets a benign weight of 1.0.
+      The temporal features also seems to be giving a very strong response.
+      The Rand index achieved with the \textbf{Chains} data set was 0.954140.
 
       \begin{table}
          \begin{center}
@@ -419,31 +418,31 @@
                \hline
                   Feature & Weight \\
                \hline
-                  Star Rating & 0.5 \\
+                  Star Rating & 2.0 \\
                   Total Review Count & 0.0 \\
-                  Available Review Count & 1.0 \\
-                  Mean Review Length & 0.5 \\
-                  Mean Word Length & 0.5 \\
+                  Available Review Count & 0.0 \\
+                  Mean Review Length & 3.0 \\
+                  Mean Word Length & 1.0 \\
                   Number of Words & 0.0 \\
-                  Mean Words per Review & 0.5 \\
-                  Total Hours & 2.0 \\
-                  Attribute Features & 3.5 \\
-                  Category Features & 0.5 \\
-                  Top Words & 1.0 \\
+                  Mean Words per Review & 1.5 \\
+                  Total Hours & 2.5 \\
+                  Attribute Features & 2.5 \\
+                  Category Features & 1.0 \\
+                  Top Words & 0.5 \\
                   Key Words & 1.0 \\
-                  Open Hours & 0.0 \\
+                  Open Hours & 3.5 \\
                \hline
             \end{tabular}
-            \caption{Weight learning on a subset of the \textbf{Chains} data set. Yields a 0.919748 Rand index.}
+            \caption{Weight learning on the \textbf{Chains} data set. Yields a 0.954140 Rand index.}
             \label{tab:weight-learning}
          \end{center}
       \end{table}
 
    \subsection{Human Annotated}
       We clustered the \textbf{Human Annotated} data set using the weights learned from the previous experiment, \textit{10} clusters, \textit{logistic} normalization, and \textit{Jaccard} set distance.
-      We were able to achieve a Rand index of \textbf{0.847605}.
+      We were able to achieve a Rand index of \textbf{0.843919}.
 
-      Although not as high as the 0.92933 achieved using the \textbf{Chains} dataset or the 0.919748 achieved in weight learning, this is still a notable achievement on real-life data.
+      Although not as high as the 0.92933 achieved using the \textbf{Chains} dataset or the 0.954140 achieved in weight learning, this is still a notable achievement on real-life data.
       Approximately 85\% of our pairing decisions were correct on this realistic data.
 
    \begin{table}
@@ -456,8 +455,8 @@
                Normalization and Set Distance & Chains & 0.82638 \\
                Feature Sets & Chains & 0.92933 \\
                Number of Clusters & Chains & 0.82629 \\
-               Weight Learning & Chains (200 Random) & 0.919748 \\
-               Human Annotated & Human Annotated & 0.847605 \\
+               Weight Learning & Chains & 0.954140 \\
+               Human Annotated & Human Annotated & 0.843919 \\
             \hline
          \end{tabular}
          \caption{Experiment Summary}
@@ -470,6 +469,11 @@
    The signals that most strongly indicate that two businesses are the same come from the reviews rather than the more structured data like number of stars.
    Our work with the textual features was limited to just a few instances of ``low-hanging fruit'',
    but if the success of those features is any indication of the richness of the reviews, then the reviews should be the focus of future work.
+
+   To keep the scope of our experiments narrow, we only examined restaurants.
+   However, these tactics can be easily applied to all businesses in general.
+
+\clearpage
 
 \appendix
 \appendixpage
