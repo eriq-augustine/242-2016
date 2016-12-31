@@ -1,0 +1,23 @@
+Clustering finished in 5 / 10 iterations - 1705 milliseconds.
+Cluster: 00, Size: 35
+         Aloha Kitchen, Backstage Deli, Biscuits, Boka Pizza, Burger King, Cafe Rio, Capriotti's Sandwich Shop, Chipotle Mexican Grill, Chipotle Mexican Grill, DJT, Dairy Queen, Dona Maria Tamales Restaurant, Dong Ting Spring, Grimaldi's - Coal Brick-Oven Pizzeria, Jersey Mike's Subs, Juan's Authentic Mexican Food, KFC, KFC, La Canasta Mexican Foods, Los Taquitos, Marco's Pizza, Matt's Big Breakfast, Nekter Juice Bar, New York Pizza & Pasta, Ono Hawaiian BBQ, Outback Steakhouse, Pei Wei, Peppersauce Cafe, Pizza Hut, Pizza Hut, Schlotzsky's, Shabu Grill, Thai Style Noodle House 2, Wendy's, Zydeco Po-Boys
+Cluster: 01, Size: 14
+         Azuza Hookah Lounge & Cafe, Burger King, Dairy Queen, Firefly, Fulton Street Food Hall, Lucky Strike, McDonald's, Mellow Mushroom, Panda Express, Papa John's Pizza, Siena Italian Authentic Trattoria and Deli, Squid Ink, TAP Sports Bar, Wendy's
+Cluster: 02, Size: 14
+         Archi's Thai Kitchen, Asadero Norte De Sonora, Essence Bakery Cafe, George's Famous Gyros & Pasta, Hard Rock Cafe, Hecho en Vegas, Jimmy's Hot Dogs, Lucky's Burgers & Hotdog Grill, Nothing Bundt Cakes, Pantry - 24 Hour Kitchen, Pizzalicious, Ramen Misoya Tomi, Taqueria El Buen Pastor, The Bagel Man
+Cluster: 03, Size: 06
+         Andiron Steak & Sea, Different Pointe of View, Donovan's Steak & Chop House, Gordon Ramsay Steak, Stockyards Restaurant, VooDoo Steak
+Cluster: 04, Size: 01
+         Jack in the Box
+Cluster: 05, Size: 09
+         Amena Bakery & Deli, Dunkin' Donuts, Frost Gelato, Mojo Yogurt, Nori Sushi, Sweet Republic, Total Wine & More, Vegas Discount Nutrition, Winco Foods
+Cluster: 06, Size: 12
+         China One, Denny's, Domino's Pizza, Domino's Pizza, Gus's New York Pizza & Bar, Jack in the Box, McDonald's, Panda Express, Subway, Subway, Taco Bell, Taco Bell
+Cluster: 07, Size: 02
+         A Bakeshop, Lago
+Cluster: 08, Size: 02
+         Moira Sushi, Sushi Brokers
+Cluster: 09, Size: 05
+         Beauty & Essex, Dunkin' Donuts, Papa John's Pizza, Starbucks, Starbucks
+TP: 175, TN: 3735, TotalPairs: 4613
+Rand Index: 0.847605

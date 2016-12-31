@@ -17,11 +17,11 @@
 
 \usepackage[accepted]{icml2015}
 
-\icmltitlerunning{YUM-Clust}
+\icmltitlerunning{RE-Clust: Restaurant Based Clustering}
 
 \begin{document}
 \twocolumn[
-   \icmltitle{YUM-Clust}
+   \icmltitle{RE-Clust: Restaurant Based Clustering}
 
    % It is OKAY to include author information, even for blind
    % submissions: the style file will automatically remove it for you
@@ -47,6 +47,17 @@
 % \author{Eriq Augustine, Varun Embar, Dhawal Joharapurkar, Xiao Li}
 
 \begin{abstract}
+   Finding your enemies can sometimes be the same task as finding those closest to you.
+
+   We utilize the data provided in the Yelp Dataset Challenge to help business owners find potential competitors if they choose to open a branch in a new location.
+   We say that a ``competitor'' is any similar business, with the idea that a similar business caters to a similar clientele and is therefore a competitor.
+   We utilize a clustering method with customized distance metrics to find similar businesses.
+
+   We then evaluate our methods on two data sets: one created computationally and one manually labeled by humans.
+   Evaluation on both sets yields a high Rand index.
+\end{abstract}
+
+\section{Introduction}
    We utilize the data provided in the Yelp Dataset Challenge to help business owners find potential competitors if they choose to open a branch in a new location.
    Using this information the business owners can not only find potential competitors, but also get an idea of how well their business will be received in the new locality.
 
@@ -58,10 +69,6 @@
    We use the k-medoids algorithm to cluster the businesses as not all attributes are numeric in nature and we need a richer set of dissimilarity scores.
    We run experiments with various parameter settings, dissimilarity scores, and features and report the Rand index on a ``gold standard'' data set as well as a human evaluated data set.
    Both experiments report a high degree of success.
-\end{abstract}
-
-\section{Introduction}
-   TODO(eriq):
 
 \section{Algorithm Formulation}
 
@@ -436,8 +443,8 @@
       We clustered the \textbf{Human Annotated} data set using the weights learned from the previous experiment, \textit{10} clusters, \textit{logistic} normalization, and \textit{Jaccard} set distance.
       We were able to achieve a Rand index of \textbf{0.847605}.
 
-      Although not as high as the 0.92933 achieved using the \textbf{Chains} dataset or the 0.919748 achieved in weight learning, this is still a noteable achievement on real-life data.
-      Approximatley 85\% of our pairing decisions were correct on this realalistic data.
+      Although not as high as the 0.92933 achieved using the \textbf{Chains} dataset or the 0.919748 achieved in weight learning, this is still a notable achievement on real-life data.
+      Approximately 85\% of our pairing decisions were correct on this realistic data.
 
    \begin{table}
       \scriptsize
@@ -457,7 +464,6 @@
          \label{tab:experiment-summary}
       \end{center}
    \end{table}
-
 
 \section{Conclusion}
    Clustering works fairly well for this dataset.
@@ -734,6 +740,5 @@
                W & 18 & N/A & Jaccard & 0.76877 \\
          \end{supertabular}
    \end{center}
-
 
 \end{document}
