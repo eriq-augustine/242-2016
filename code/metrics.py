@@ -64,6 +64,9 @@ def randIndex(clusters, businesses, truthPairs = None, truthIds = None):
 
             totalPairs += 1
 
+    # TEST
+    print("TP: %d, TN: %d, TotalPairs: %d" % (tp, tn, totalPairs))
+
     return float(tp + tn) / totalPairs
 
 # Swap from business indexes to business ids.
@@ -157,7 +160,7 @@ def getHumanTruthPairs():
             if (minId not in pairs):
                 pairs[minId] = {}
 
-            pairs[minId][maxId] = similarityValue
+            pairs[minId][maxId] = similar
 
     return pairs, set(truthIds)
 
