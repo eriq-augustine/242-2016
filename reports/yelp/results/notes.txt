@@ -1,0 +1,6 @@
+There was a bug in the Rand Index calculation that slightly raised the results.
+The correct value (Rn) can be computed the old (Ro):
+$$ R_{n} = \frac^{R_{o}(l + x) - x}_{l} $$
+
+Where $ l $ is the old denominator (1302177 for all the ground truth calculations),
+and $ x $ is the number of unique entities in the pairings (3068 for all ground truth calculations).
