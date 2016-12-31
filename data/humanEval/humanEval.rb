@@ -114,10 +114,15 @@ def loadPairs()
 
    File.open(PAIRS_FILE, 'r'){|file|
       file.each{|line|
-         parts = line.strip().split(',').map{|val| val.to_i()}
+         parts = line.strip().split(',')
          minId = [parts[0], parts[1]].min()
          maxId = [parts[0], parts[1]].max()
-         pairs[minId][maxId] = parts[2]
+
+         if (pairs[minId].include?(maxId))
+            $stderr.puts("Duplicate Pair: [#{parts[0]},#{parts[1]}]")
+         end
+
+         pairs[minId][maxId] = parts[2].to_i()
       }
    }
 
@@ -129,7 +134,7 @@ def loadIds()
 
    File.open(IDS_FILE, 'r'){|file|
       file.each{|line|
-         ids << line.strip().to_i()
+         ids << line.strip()
       }
    }
 
@@ -164,7 +169,7 @@ def fetchBusiness(id)
 				FROM BusinessHours
 				GROUP BY businessId
 			) BH ON BH.businessId = B.id
-		WHERE B.yelpId = #{id}
+		WHERE B.yelpId = '#{id}'
 	"
 
 	result = $conn.exec(query)
