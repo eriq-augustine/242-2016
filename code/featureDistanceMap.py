@@ -16,7 +16,8 @@ OPEN_HOURS = 12
 NUM_FEATURES = 13
 
 # DEFAULT_WEIGHTS = [1.0, 0.0, 2.0, 0.0, 0.5, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0, 1.5, 0.0]
-DEFAULT_WEIGHTS = [2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.5, 2.0, 1.0, 1.0, 0.5, 1.0, 0.0]
+# DEFAULT_WEIGHTS = [2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.5, 2.0, 1.0, 1.0, 0.5, 1.0, 0.0]
+DEFAULT_WEIGHTS = [0.5, 0.0, 1.0, 0.5, 0.5, 0.0, 0.5, 2.0, 3.5, 0.5, 1.0, 1.0, 0.0]
 
 class FeatureDistanceMap:
     def __init__(self, mapping = None, weights = None):
@@ -25,7 +26,8 @@ class FeatureDistanceMap:
             'manhattan': distance.manhattanScalar,
             'levenshtein': lambda a, b: distance.levenshtein([a], [b]),
             'needleman_wunsch': lambda a, b: distance.needleman_wunsch([a], [b]),
-            'jaccard': distance.jaccard
+            'jaccard': distance.jaccard,
+            'dice': distance.dice
         }
 
         self._mapping = mapping
