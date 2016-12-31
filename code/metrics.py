@@ -64,9 +64,6 @@ def randIndex(clusters, businesses, truthPairs = None, truthIds = None):
 
             totalPairs += 1
 
-    # TEST
-    print("TP: %d, TN: %d, TotalPairs: %d" % (tp, tn, totalPairs))
-
     return float(tp + tn) / totalPairs
 
 # Swap from business indexes to business ids.
