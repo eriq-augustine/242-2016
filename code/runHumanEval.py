@@ -8,14 +8,18 @@ import metrics
 K = 10
 
 # Learned from weight learning.
-WEIGHTS = [2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.5, 2.0, 1.0, 1.0, 0.5, 1.0, 0.0]
+# WEIGHTS = [2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.5, 2.0, 1.0, 1.0, 0.5, 1.0, 0.0]
+# WEIGHTS = [0.5, 0.0, 1.0, 0.5, 0.5, 0.0, 0.5, 2.0, 3.5, 0.5, 1.0, 1.0, 0.0]
+WEIGHTS = [2.0, 0.0, 0.0, 3.0, 1.0, 0.0, 1.5, 2.5, 2.5, 1.0, 0.5, 1.0, 3.5]
 
 def run():
     businesses = features.getBusinesses(data.DATA_SOURCE_HUMAN_EVAL)
 
     featureDistMap = featureDistanceMap.FeatureDistanceMap(learnWeights.getFeatureMapping(), WEIGHTS)
-    # kMeans = clustering.KMeans(K, featureDistMap)
-    kMeans = clustering.KMeans(K, featureDistanceMap.FeatureDistanceMap())
+    kMeans = clustering.KMeans(K, featureDistMap)
+
+    # kMeans = clustering.KMeans(K, featureDistanceMap.FeatureDistanceMap())
+
     clusters = kMeans.cluster(businesses)
 
     for i in range(len(clusters)):
